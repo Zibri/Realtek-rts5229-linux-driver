@@ -11,6 +11,6 @@ Build Steps
 2) make install
 3) depmod -a
 4) echo blacklist rtsx_pci >>/etc/modprobe.d/blacklist.conf
-4) reboot your computer
+5) reboot your computer
 
-Note: Root privilege is required in step 2 and 3
+Note: Root privilege is required in step 2, 3 and 4
