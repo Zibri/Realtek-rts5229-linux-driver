@@ -38,6 +38,7 @@ debug:
 	cp -f ./define.debug ./define.h
 	make -C /lib/modules/$(shell uname -r)/build/ SUBDIRS=$(PWD) modules
 install:
+	mkdir -p /lib/modules/$(shell uname -r)/kernel/drivers/scsi
 	cp $(TARGET_MODULE).ko /lib/modules/$(shell uname -r)/kernel/drivers/scsi -f
 clean:
 	rm -f *.o *.ko
