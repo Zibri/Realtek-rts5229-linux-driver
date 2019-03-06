@@ -261,7 +261,9 @@ static struct scsi_host_template rtsx_host_template = {
 	 * periodically someone should test to see which setting is more
 	 * optimal.
 	 */
-	.use_clustering =		1,
+	
+	// Commented due to it is removed since kernel 5.0
+	// .use_clustering =		1,
 
 	
 	.emulated =			1,
