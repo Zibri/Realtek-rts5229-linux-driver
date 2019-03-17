@@ -29,6 +29,7 @@
 #include <linux/delay.h>
 #include <linux/interrupt.h>
 #include <linux/kernel.h>
+#include <linux/ktime.h>
 #include <linux/version.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
@@ -185,12 +186,27 @@ static inline struct rtsx_dev *host_to_rtsx(struct Scsi_Host *host) {
 
 static inline void get_current_time(u8 *timeval_buf, int buf_len)
 {
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
+
+	/*
+	struct timeval {
+	   __kernel_time_t		tv_sec;		// seconds 
+	   __kernel_suseconds_t	tv_usec;	// microseconds
+        };
+	*/
+
 	struct timeval tv;
+#else
+	ktime_t tv;
+    	u16 tv_usec;
+#endif
 
 	if (!timeval_buf || (buf_len < 8)) {
 		return;
 	}
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
 	do_gettimeofday(&tv);
 
 	timeval_buf[0] = (u8)(tv.tv_sec >> 24);
@@ -201,6 +217,18 @@ static inline void get_current_time(u8 *timeval_buf, int buf_len)
 	timeval_buf[5] = (u8)(tv.tv_usec >> 16);
 	timeval_buf[6] = (u8)(tv.tv_usec >> 8);
 	timeval_buf[7] = (u8)(tv.tv_usec);
+#else
+	tv = ktime_get_real();   // equals to tv.tv_sec
+	tv_usec = ktime_to_us(tv);   // equals to tv.tv_usec
+	timeval_buf[0] = (u8)(tv >> 24);
+    	timeval_buf[1] = (u8)(tv >> 16);
+	timeval_buf[2] = (u8)(tv >> 8);
+	timeval_buf[3] = (u8)(tv);
+	timeval_buf[4] = (u8)(tv_usec >> 24);
+	timeval_buf[5] = (u8)(tv_usec >> 16);
+	timeval_buf[6] = (u8)(tv_usec >> 8);
+	timeval_buf[7] = (u8)(tv_usec);
+#endif
 }
 
 /* The scsi_lock() and scsi_unlock() macros protect the sm_state and the

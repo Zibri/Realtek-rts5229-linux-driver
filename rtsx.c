@@ -261,7 +261,9 @@ static struct scsi_host_template rtsx_host_template = {
 	 * periodically someone should test to see which setting is more
 	 * optimal.
 	 */
-	.use_clustering =		1,
+	
+	// Commented due to it is removed since kernel 5.0
+	// .use_clustering =		1,
 
 	
 	.emulated =			1,
@@ -1047,8 +1049,8 @@ static void  rtsx_remove(struct pci_dev *pci)
 
 
 static struct pci_device_id rts5229_ids[] = {
-	{ 0x10EC, 0x5229, PCI_ANY_ID, PCI_ANY_ID, PCI_CLASS_OTHERS << 16, 0xFF0000 },
-	{ 0x10EC, 0x5227, PCI_ANY_ID, PCI_ANY_ID, PCI_CLASS_OTHERS << 16, 0xFF0000 },
+	{ PCI_DEVICE(0x10EC, 0x5229), PCI_CLASS_OTHERS << 16, 0xFF0000 },
+	{ PCI_DEVICE(0x10EC, 0x5227), PCI_CLASS_OTHERS << 16, 0xFF0000 },
 	{ 0, },
 };
 

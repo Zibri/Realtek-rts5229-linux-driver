@@ -22,9 +22,11 @@
 # Makefile for the PCI-Express Card Reader drivers.
 #
 
+KVERSION := $(shell uname -r)
+
 TARGET_MODULE := rts5229
 
-EXTRA_CFLAGS := -Idrivers/scsi 
+EXTRA_CFLAGS := -Idrivers/scsi
 
 obj-m += $(TARGET_MODULE).o
 
@@ -33,13 +35,13 @@ $(TARGET_MODULE)-objs := rtsx.o rtsx_chip.o rtsx_transport.o rtsx_scsi.o rtsx_ca
 
 default:
 	cp -f ./define.release ./define.h
-	make -C /lib/modules/$(shell uname -r)/build/ SUBDIRS=$(PWD) modules
+	make -C /lib/modules/$(KVERSION)/build/ SUBDIRS=$(PWD) modules
 debug:
 	cp -f ./define.debug ./define.h
-	make -C /lib/modules/$(shell uname -r)/build/ SUBDIRS=$(PWD) modules
+	make -C /lib/modules/$(KVERSION)/build/ SUBDIRS=$(PWD) modules
 install:
-	mkdir -p /lib/modules/$(shell uname -r)/kernel/drivers/scsi
-	cp $(TARGET_MODULE).ko /lib/modules/$(shell uname -r)/kernel/drivers/scsi -f
+	mkdir -p /lib/modules/$(KVERSION)/kernel/drivers/scsi
+	cp $(TARGET_MODULE).ko /lib/modules/$(KVERSION)/kernel/drivers/scsi -f
 clean:
 	rm -f *.o *.ko
 	rm -f $(TARGET_MODULE).mod.c

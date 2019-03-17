@@ -314,7 +314,10 @@ struct sense_data_t {
 #define CHK_BIT(data, idx)	((data) & (1 << (idx)))
 
 #define SG_INT			0x04
-#define SG_END			0x02
+
+// Commented to remove the redefined variable in /include/linux/blkdev.h
+// #define SG_END			0x02
+
 #define SG_VALID		0x01
 
 #define SG_NO_OP		0x00
