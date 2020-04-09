@@ -937,7 +937,7 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 
 	printk(KERN_INFO "Resource length: 0x%x\n", (unsigned int)pci_resource_len(pci,0));
 	dev->addr = pci_resource_start(pci, 0);
-	dev->remap_addr = ioremap_nocache(dev->addr, pci_resource_len(pci,0));
+	dev->remap_addr = ioremap(dev->addr, pci_resource_len(pci,0));
 	if (dev->remap_addr == NULL) {
 		printk(KERN_ERR "ioremap error\n");
 		err = -ENXIO;
