@@ -22,3 +22,17 @@ If you wanna unload the module after suspend, run the following command:
 $ echo SUSPEND_MODULES="rts5229" | sudo tee -a /etc/pm/config.d/modules
 ```
 
+All procedure:
+
+```bash
+git clone https://github.com/Zibri/Realtek-rts5229-linux-driver.git
+sudo mkdir /usr/src/rts5229-1.07
+sudo cp Realtek-rts5229-linux-driver/* /usr/src/rts5229-1.07
+cd /usr/src/rts5229-1.07
+sudo su
+> dkms install -m rts5229 -v 1.07
+> exit
+sudo mkinitcpio -p linux
+sudo dkms autoinstall
+reboot
+```
