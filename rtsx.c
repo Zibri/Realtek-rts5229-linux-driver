@@ -552,13 +552,13 @@ SkipForAbort:
 	 * after the down() -- that's necessary for the thread-shutdown
 	 * case.
 	 *
-	 * complete_and_exit() goes even further than this -- it is safe in
+	 * kthread_complete_and_exit() goes even further than this -- it is safe in
 	 * the case that the thread of the caller is going away (not just
 	 * the structure) -- this is necessary for the module-remove case.
 	 * This is important in preemption kernels, which transfer the flow
 	 * of execution immediately upon a complete().
 	 */
-	complete_and_exit(&dev->control_exit, 0);
+	kthread_complete_and_exit(&dev->control_exit, 0);
 }
 
 
@@ -600,7 +600,7 @@ static int rtsx_polling_thread(void * __dev)
 		mutex_unlock(&dev->dev_mutex);
 	}
 
-	complete_and_exit(&dev->polling_exit, 0);
+	kthread_complete_and_exit(&dev->polling_exit, 0);
 }
 
 /*
@@ -788,7 +788,7 @@ static int rtsx_scan_thread(void * __dev)
 		
 	}
 
-	complete_and_exit(&dev->scanning_done, 0);
+	kthread_complete_and_exit(&dev->scanning_done, 0);
 }
 
 static void rtsx_init_options(struct rtsx_chip *chip)
