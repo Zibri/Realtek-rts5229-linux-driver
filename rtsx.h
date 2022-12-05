@@ -56,32 +56,8 @@
 
 #define CR_DRIVER_NAME		"rts5229"
 
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 14)
-#ifdef CONFIG_PCI
-#undef pci_intx
-#define pci_intx(pci,x)
-#endif
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 24)
-#define sg_page(sg)	(sg)->page
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 25)
-#define scsi_set_resid(srb, residue)	((srb)->resid = (residue))
-#define scsi_get_resid(srb)		((srb)->resid)
-
-static inline unsigned scsi_bufflen(struct scsi_cmnd *cmd)
-{
-	return cmd->request_bufflen;
-}
-#endif
-
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 32)
 #define pci_get_bus_and_slot(bus, devfn)	\
 	pci_get_domain_bus_and_slot(0, (bus), (devfn))
-#endif
 
 /*
  * macros for easy use
@@ -186,38 +162,13 @@ static inline struct rtsx_dev *host_to_rtsx(struct Scsi_Host *host) {
 
 static inline void get_current_time(u8 *timeval_buf, int buf_len)
 {
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
-
-	/*
-	struct timeval {
-	   __kernel_time_t		tv_sec;		// seconds 
-	   __kernel_suseconds_t	tv_usec;	// microseconds
-        };
-	*/
-
-	struct timeval tv;
-#else
 	ktime_t tv;
     	u16 tv_usec;
-#endif
 
 	if (!timeval_buf || (buf_len < 8)) {
 		return;
 	}
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
-	do_gettimeofday(&tv);
-
-	timeval_buf[0] = (u8)(tv.tv_sec >> 24);
-	timeval_buf[1] = (u8)(tv.tv_sec >> 16);
-	timeval_buf[2] = (u8)(tv.tv_sec >> 8);
-	timeval_buf[3] = (u8)(tv.tv_sec);
-	timeval_buf[4] = (u8)(tv.tv_usec >> 24);
-	timeval_buf[5] = (u8)(tv.tv_usec >> 16);
-	timeval_buf[6] = (u8)(tv.tv_usec >> 8);
-	timeval_buf[7] = (u8)(tv.tv_usec);
-#else
 	tv = ktime_get_real();   // equals to tv.tv_sec
 	tv_usec = ktime_to_us(tv);   // equals to tv.tv_usec
 	timeval_buf[0] = (u8)(tv >> 24);
@@ -228,7 +179,6 @@ static inline void get_current_time(u8 *timeval_buf, int buf_len)
 	timeval_buf[5] = (u8)(tv_usec >> 16);
 	timeval_buf[6] = (u8)(tv_usec >> 8);
 	timeval_buf[7] = (u8)(tv_usec);
-#endif
 }
 
 /* The scsi_lock() and scsi_unlock() macros protect the sm_state and the

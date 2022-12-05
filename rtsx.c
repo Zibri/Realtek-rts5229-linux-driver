@@ -129,15 +129,9 @@ static int slave_configure(struct scsi_device *sdev)
 #define SPRINTF(args...) \
 	do { if (pos < buffer+length) pos += sprintf(pos, ## args); } while (0)
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-static int queuecommand_lck(struct scsi_cmnd *srb,
-			void (*done)(struct scsi_cmnd *))
-{
-#else
 static int queuecommand_lck(struct scsi_cmnd *srb)
 {
 	void (*done)(struct scsi_cmnd *) = scsi_done;
-#endif
 	struct rtsx_dev *dev = host_to_rtsx(srb->device->host);
 	struct rtsx_chip *chip = dev->chip;
 
@@ -156,24 +150,13 @@ static int queuecommand_lck(struct scsi_cmnd *srb)
 		return 0;
 	}
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-	srb->scsi_done = done;
-#endif
 	chip->srb = srb;
 	complete(&dev->cmnd_ready);
 
 	return 0;
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 37)
-static int queuecommand(struct scsi_cmnd *srb,
-			void (*done)(struct scsi_cmnd *))
-{
-	return queuecommand_lck(srb, done);
-}
-#else
 static DEF_SCSI_QCMD(queuecommand)
-#endif
 
 /***********************************************************************
  * Error handling functions
@@ -520,11 +503,7 @@ static int rtsx_control_thread(void * __dev)
 
 		
 		else if (chip->srb->result != DID_ABORT << 16) {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-			chip->srb->scsi_done(chip->srb);
-#else
 			scsi_done(chip->srb);
-#endif
 		} else {
 SkipForAbort:
 			printk(KERN_ERR "scsi command aborted\n");
@@ -741,11 +720,7 @@ static void quiesce_and_remove_host(struct rtsx_dev *dev)
 	if (chip->srb) {
 		chip->srb->result = DID_NO_CONNECT << 16;
 		scsi_lock(host);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-		chip->srb->scsi_done(dev->chip->srb);
-#else
 		scsi_done(dev->chip->srb);
-#endif
 		chip->srb = NULL;
 		scsi_unlock(host);
 	}
