@@ -1,6 +1,6 @@
 /* Driver for Realtek PCI-Express card reader
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -39,7 +39,7 @@
 void rtsx_disable_card_int(struct rtsx_chip *chip)
 {
 	u32 reg = rtsx_readl(chip, RTSX_BIER);
-	
+
 	reg &= ~(SD_INT_EN | MS_INT_EN);
 	rtsx_writel(chip, RTSX_BIER, reg);
 }
@@ -48,9 +48,9 @@ void rtsx_enable_card_int(struct rtsx_chip *chip)
 {
 	u32 reg = rtsx_readl(chip, RTSX_BIER);
 	int i;
-	
+
 	for (i = 0; i <= chip->max_lun; i++) {
-		
+
 		if (chip->lun2card[i] & SD_CARD) {
 			reg |= SD_INT_EN;
 		}
@@ -58,7 +58,7 @@ void rtsx_enable_card_int(struct rtsx_chip *chip)
 			reg |= MS_INT_EN;
 		}
 	}
-	
+
 	rtsx_writel(chip, RTSX_BIER, reg);
 }
 
@@ -70,11 +70,11 @@ void rtsx_enable_bus_int(struct rtsx_chip *chip)
 #endif
 
 	reg = TRANS_OK_INT_EN | TRANS_FAIL_INT_EN | DELINK_INT_EN;
-	
+
 #ifndef DISABLE_CARD_INT
 	for (i = 0; i <= chip->max_lun; i++) {
 		RTSX_DEBUGP(("lun2card[%d] = 0x%02x\n", i, chip->lun2card[i]));
-		
+
 		if (chip->lun2card[i] & SD_CARD) {
 			reg |= SD_INT_EN;
 		}
@@ -92,7 +92,7 @@ void rtsx_enable_bus_int(struct rtsx_chip *chip)
 	}
 
 	rtsx_writel(chip, RTSX_BIER, reg);
-	
+
 	RTSX_DEBUGP(("RTSX_BIER: 0x%08x\n", reg));
 }
 
@@ -114,11 +114,11 @@ static int rtsx_init_pull_ctl(struct rtsx_chip *chip)
 		rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_PULL_CTL3, 0xFF, 0xD5);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_PULL_CTL5, 0xFF, 0x55);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_PULL_CTL6, 0xFF, 0x15);
-	
+
 	retval = rtsx_send_cmd(chip, 0, 100);
 	if (retval < 0)
 		TRACE_RET(chip, STATUS_FAIL);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -129,10 +129,10 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 	rtsx_writel(chip, RTSX_HCBAR, chip->host_cmds_addr);
 
 	rtsx_disable_aspm(chip);
-	
+
 	if (chip->asic_code) {
 		u16 val;
- 		
+
  		retval = rtsx_write_phy_register(chip, 0x00, chip->phy_pcr);
  		if (retval != STATUS_SUCCESS) {
  			TRACE_RET(chip, STATUS_FAIL);
@@ -172,7 +172,7 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 			RTSX_DEBUGP(("Default, chip->phy_voltage = 0x%x\n", chip->phy_voltage));
 		}
 	}
-	
+
 	RTSX_WRITE_REG(chip, HOST_SLEEP_STATE, 0x03, 0x00);
 
 	RTSX_WRITE_REG(chip, CARD_CLK_EN, 0x1E, 0);
@@ -193,9 +193,9 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 #ifdef LED_AUTO_BLINK
 	RTSX_WRITE_REG(chip, OLT_LED_CTL, LED_SHINE_EN | LED_SPEED_MASK, 0x02);
 #endif
-	
+
 	RTSX_WRITE_REG(chip, CHANGE_LINK_STATE, 0x0A, 0);
-	
+
 	RTSX_WRITE_REG(chip, CARD_DRIVE_SEL, 0xFF, chip->card_drive_sel);
 	RTSX_WRITE_REG(chip, SD30_DRIVE_SEL, 0x07, chip->sd30_drive_sel_3v3);
 
@@ -226,38 +226,38 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-	}	
-	
+	}
+
 	retval = rtsx_write_config_byte(chip, 0x81, 1);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = rtsx_write_cfg_dw(chip, 0, 0x70C, 0xFF000000, 0x5B);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_WRITE_REG(chip, IRQSTAT0, LINK_RDY_INT, LINK_RDY_INT);
 
 	RTSX_WRITE_REG(chip, PERST_GLITCH_WIDTH, 0xFF, 0x80);
-	
+
 	RTSX_WRITE_REG(chip, PWD_SUSPEND_EN, 0xFF, 0xFF);
 	RTSX_WRITE_REG(chip, PWR_GATE_CTRL, PWR_GATE_EN, PWR_GATE_EN);
 
 	rtsx_enable_bus_int(chip);
-	
+
 #ifdef HW_INT_WRITE_CLR
 	RTSX_WRITE_REG(chip, NFTS_TX_CTRL, 0x02, 0);
 #endif
-	
+
 	chip->need_reset = 0;
 
 	chip->int_reg = rtsx_readl(chip, RTSX_BIPR);
 #ifdef HW_INT_WRITE_CLR
 	rtsx_writel(chip, RTSX_BIPR, chip->int_reg);
 #endif
-	
+
 	if (chip->int_reg & SD_EXIST) {
 		chip->need_reset |= SD_CARD;
 	}
@@ -290,7 +290,7 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 	} else {
 		RTSX_WRITE_REG(chip, PETXCFG, 0x08, 0x00);
 	}
-	
+
 	if (CHECK_PID(chip, 0x5227)) {
 		if (chip->ltr_en) {
 			u16 val;
@@ -311,10 +311,10 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 		RTSX_WRITE_REG(chip, CARD_PWR_CTL, 0xFF, MS_PARTIAL_POWER_ON | SD_PARTIAL_POWER_ON);
 		udelay(chip->pmos_pwr_on_interval);
 		RTSX_WRITE_REG(chip, CARD_PWR_CTL, 0xFF, MS_POWER_ON | SD_POWER_ON);
-		
+
 		wait_timeout(200);
 	}
-	
+
 	if (chip->asic_code) {
 		RTSX_WRITE_REG(chip, 0xFE78, 0x03, 0x00);
 		RTSX_WRITE_REG(chip, 0xFE78, 0x03, 0x01);
@@ -329,14 +329,14 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
 	rtsx_reset_detected_cards(chip, 0);
 
 	chip->driver_first_load = 0;
-	
+
 	return STATUS_SUCCESS;
 }
 
 static inline int check_sd_speed_prior(u32 sd_speed_prior)
 {
 	int i, fake_para = 0;
-	
+
 	for (i = 0; i < 4; i++) {
 		u8 tmp = (u8)(sd_speed_prior >> (i*8));
 		if ((tmp < 0x01) || (tmp > 0x04)) {
@@ -344,14 +344,14 @@ static inline int check_sd_speed_prior(u32 sd_speed_prior)
 			break;
 		}
 	}
-	
+
 	return !fake_para;
 }
 
 static inline int check_sd_current_prior(u32 sd_current_prior)
 {
 	int i, fake_para = 0;
-	
+
 	for (i = 0; i < 4; i++) {
 		u8 tmp = (u8)(sd_current_prior >> (i*8));
 		if (tmp > 0x03) {
@@ -359,7 +359,7 @@ static inline int check_sd_current_prior(u32 sd_current_prior)
 			break;
 		}
 	}
-	
+
 	return !fake_para;
 }
 
@@ -412,8 +412,8 @@ static inline int rts5229_auto_load(struct rtsx_chip *chip, u32 relink_time,
 					map_item[i].item.cfg_epcore.func,
 					map_item[i].item.cfg_epcore.mode,
 					map_item[i].item.cfg_epcore.data));
-			
-			retval = rts5229_set_cfg_epcore(chip, autoload_addr, 
+
+			retval = rts5229_set_cfg_epcore(chip, autoload_addr,
 					map_item[i].item.cfg_epcore.cfg_addr,
 					map_item[i].item.cfg_epcore.func,
 					map_item[i].item.cfg_epcore.mode,
@@ -483,7 +483,7 @@ static int rtsx_init_from_hw(struct rtsx_chip *chip)
 	}
 
 	retval = rtsx_read_register(chip, 0xFE90, &val);
-	if (retval != STATUS_SUCCESS)	
+	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, STATUS_FAIL);
 	RTSX_DEBUGP(("0xFE90: 0x%x\n", val));
 	chip->ic_version = val & 0x0F;
@@ -505,10 +505,10 @@ static int rtsx_init_from_hw(struct rtsx_chip *chip)
 			DEFAULT_SINGLE,
 		};
 		u8 sd_drive[4] = {
-			0x01,	
-			0x02,	
-			0x05,	
-			0x03	
+			0x01,
+			0x02,
+			0x05,
+			0x03
 		};
 		u8 ssc_depth1[4] = {
 			SSC_DEPTH_512K,
@@ -525,7 +525,7 @@ static int rtsx_init_from_hw(struct rtsx_chip *chip)
 
 		rts5229_init_cfg_epcore(chip, 0x727, 0, val);
 
-		chip->lun_mode = lun_mode[(val >> 6) & 0x03];	
+		chip->lun_mode = lun_mode[(val >> 6) & 0x03];
 		chip->aspm_l0s_l1_en = (val >> 4) & 0x03;
 		chip->sd30_drive_sel_1v8 = sd_drive[(val >> 2) & 0x03];
 		chip->card_drive_sel &= 0x3F;
@@ -547,7 +547,7 @@ static int rtsx_init_from_hw(struct rtsx_chip *chip)
 		val = (u8)(lval >> 8);
 		rts5229_init_cfg_epcore(chip, 0x725, 0, val);
 
-		if ((val & 0xE0) != 0xE0)	
+		if ((val & 0xE0) != 0xE0)
 			chip->asic_sd_sdr104_clk = 206 - ((val >> 5) & 0x07) * 3;
 		if ((val & 0x1C) != 0x1C)
 			chip->asic_sd_sdr50_clk = 98 - ((val >> 2) & 0x07) * 2;
@@ -571,7 +571,7 @@ static int rtsx_init_from_hw(struct rtsx_chip *chip)
 
 		val = (u8)lval;
 		rts5229_init_cfg_epcore(chip, 0x814, 0, val);
-		
+
 		if (chip->auto_delink_en != 2)
 			chip->auto_delink_en = (val & 0x80) ? 1 : 0;
 		chip->sd30_drive_sel_3v3 = sd_drive[(val >> 5) & 0x03];
@@ -579,21 +579,21 @@ static int rtsx_init_from_hw(struct rtsx_chip *chip)
 
 	if (chip->hp_watch_bios_hotplug && CHK_AUTODELINK_EN(chip)) {
 		u8 reg58, reg5b;
-		
+
 		if (rtsx_read_pci_cfg_byte(0x00, 0x1C, 0x02, 0x58, &reg58) < 0) {
 			return STATUS_SUCCESS;
 		}
 		if (rtsx_read_pci_cfg_byte(0x00, 0x1C, 0x02, 0x5B, &reg5b) < 0) {
 			return STATUS_SUCCESS;
 		}
-		
+
 		RTSX_DEBUGP(("reg58 = 0x%x, reg5b = 0x%x\n", reg58, reg5b));
-		
+
 		if ((reg58 == 0x00) && (reg5b == 0x01)) {
 			chip->auto_delink_en = 0;
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -603,25 +603,25 @@ int rtsx_init_chip(struct rtsx_chip *chip)
 	struct ms_info *ms_card = &(chip->ms_card);
 	int retval;
 	unsigned int i;
-	
-	RTSX_DEBUGP(("VID: 0x%04x, PID: 0x%04x, SSVID: 0x%04x, SSDID: 0x%04x\n", 
+
+	RTSX_DEBUGP(("VID: 0x%04x, PID: 0x%04x, SSVID: 0x%04x, SSDID: 0x%04x\n",
 		     chip->vendor_id, chip->product_id, chip->ssvid, chip->ssdid));
-		     
+
 	chip->ic_version = 0;
-	
+
 #ifdef _MSG_TRACE
 	chip->msg_idx = 0;
 #endif
 
 	memset(sd_card, 0, sizeof(struct sd_info));
 	memset(ms_card, 0, sizeof(struct ms_info));
-	
+
 	chip->sd_reset_counter = 0;
 	chip->ms_reset_counter = 0;
-	
+
 	chip->sd_show_cnt = MAX_SHOW_CNT;
 	chip->ms_show_cnt = MAX_SHOW_CNT;
-	
+
 	chip->auto_delink_cnt = 0;
 	chip->auto_delink_allowed = 1;
 	rtsx_set_stat(chip, RTSX_STAT_INIT);
@@ -632,17 +632,17 @@ int rtsx_init_chip(struct rtsx_chip *chip)
 	chip->phy_debug_mode = 0;
 
 	chip->al_map_cnt = 0;
-	
+
 	for (i = 0; i < MAX_ALLOWED_LUN_CNT; i++) {
 		set_sense_type(chip, i, SENSE_TYPE_NO_SENSE);
 		chip->rw_fail_cnt[i] = 0;
 	}
-		     
+
 	if (!check_sd_speed_prior(chip->sd_speed_prior)) {
 		chip->sd_speed_prior = 0x01040203;
 	}
 	RTSX_DEBUGP(("sd_speed_prior = 0x%08x\n", chip->sd_speed_prior));
-	
+
 	if (!check_sd_current_prior(chip->sd_current_prior)) {
 		chip->sd_current_prior = 0x00010203;
 	}
@@ -654,19 +654,19 @@ int rtsx_init_chip(struct rtsx_chip *chip)
 	if ((chip->mmc_ddr_tx_phase > 31) || (chip->mmc_ddr_tx_phase < 0)) {
 		chip->mmc_ddr_tx_phase = 0;
 	}
-	
+
 	RTSX_WRITE_REG(chip, FPDCTL, SSC_POWER_DOWN, 0);
 	udelay(200);
 
 	RTSX_WRITE_REG(chip, CLK_DIV, 0x07, 0x07);
-	
+
 	retval = rtsx_init_from_hw(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	chip->ss_en = 0;
-	
+
 	RTSX_DEBUGP(("chip->asic_code = %d\n", chip->asic_code));
 	RTSX_DEBUGP(("chip->use_hw_setting = %d\n", chip->use_hw_setting));
 	RTSX_DEBUGP(("chip->ic_version = 0x%x\n", chip->ic_version));
@@ -725,7 +725,7 @@ int rtsx_init_chip(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -756,15 +756,15 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 	struct sd_info *sd_card = &(chip->sd_card);
 #endif
 	int ss_allowed;
-	
+
 	if (rtsx_chk_stat(chip, RTSX_STAT_SUSPEND)) {
 		return;
 	}
-	
+
 	if (rtsx_chk_stat(chip, RTSX_STAT_DELINK)) {
 		goto Delink_Stage;
 	}
-	
+
 	if (chip->polling_config) {
 		u8 val;
 		rtsx_read_config_byte(chip, 0, &val);
@@ -773,21 +773,21 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 	if (rtsx_chk_stat(chip, RTSX_STAT_SS)) {
 		return;
 	}
-	
+
 #ifdef SUPPORT_OCP
 	if (chip->ocp_int) {
 		rtsx_read_register(chip, OCPSTAT, &(chip->ocp_stat));
-		
+
 		if (chip->card_exist & SD_CARD) {
 			sd_power_off_card3v3(chip);
 		} else if (chip->card_exist & MS_CARD) {
 			ms_power_off_card3v3(chip);
 		}
-		
+
 		chip->ocp_int = 0;
 	}
 #endif
-		
+
 #ifdef SUPPORT_SD_LOCK
 	if (sd_card->sd_erase_status) {
 		if (chip->card_exist & SD_CARD) {
@@ -805,13 +805,13 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 #endif
 
 	rtsx_init_cards(chip);
-	
+
 	if (chip->ss_en) {
 		ss_allowed = 1;
 	} else {
 		ss_allowed = 0;
 	}
-	
+
 	if (ss_allowed) {
 		if (rtsx_get_stat(chip) != RTSX_STAT_IDLE) {
 			chip->ss_counter = 0;
@@ -824,7 +824,7 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 			}
 		}
 	}
-	
+
 	if (chip->idle_counter < IDLE_MAX_COUNT) {
 		chip->idle_counter ++;
 	} else {
@@ -838,13 +838,13 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 			chip->led_toggle_counter = 0;
 #endif
 			rtsx_force_power_on(chip, SSC_PDCTL);
-			
+
 			if (chip->led_always_on && chip->card_ready && chip->blink_led) {
 				turn_on_led(chip);
 			} else {
 				turn_off_led(chip);
 			}
-			
+
 			if (chip->auto_power_down && !chip->card_ready) {
 				rtsx_force_power_down(chip, SSC_PDCTL | OC_PDCTL);
 			}
@@ -855,12 +855,12 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 	case RTSX_STAT_RUN:
 #ifndef LED_AUTO_BLINK
 		rtsx_blink_led(chip);
-#endif 
+#endif
 		do_remaining_work(chip);
 		break;
 
 	case RTSX_STAT_IDLE:
-		rtsx_enable_aspm(chip);	
+		rtsx_enable_aspm(chip);
 
 		if (chip->ltr_enabled)
 			rtsx_write_register(chip, LTR_CTL, 0xFF, 0x83);
@@ -870,7 +870,7 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 		break;
 	}
 
-	
+
 #ifdef SUPPORT_OCP
 	if (chip->ocp_stat & (SD_OC_NOW | SD_OC_EVER)) {
 		RTSX_DEBUGP(("Over current, OCPSTAT is 0x%x\n", chip->ocp_stat));
@@ -886,19 +886,19 @@ void rtsx_polling_func(struct rtsx_chip *chip)
 #endif
 
 Delink_Stage:
-	if (CHK_AUTODELINK_EN(chip) && chip->auto_delink_allowed && 
+	if (CHK_AUTODELINK_EN(chip) && chip->auto_delink_allowed &&
 			!chip->card_ready && !chip->card_ejected) {
 		int enter_L1 = chip->auto_delink_in_L1 && (chip->aspm_l0s_l1_en || chip->ss_en);
 		int delink_stage1_cnt = chip->delink_stage1_step;
 		int delink_stage2_cnt = delink_stage1_cnt + chip->delink_stage2_step;
 		int delink_stage3_cnt = delink_stage2_cnt + chip->delink_stage3_step;
-		
+
 		if (chip->auto_delink_cnt <= delink_stage3_cnt) {
 			if (chip->auto_delink_cnt == delink_stage1_cnt) {
 				rtsx_set_stat(chip, RTSX_STAT_DELINK);
-				
+
 				clear_first_install_mark(chip);
-				
+
 				if (chip->card_exist) {
 					RTSX_DEBUGP(("False card inserted, do force delink\n"));
 
@@ -910,11 +910,11 @@ Delink_Stage:
 					if (enter_L1) {
 						rtsx_enter_L1(chip);
 					}
-					
+
 					chip->auto_delink_cnt = delink_stage3_cnt + 1;
 				} else {
 					RTSX_DEBUGP(("No card inserted, do delink\n"));
-                
+
 					if (enter_L1) {
 						rtsx_write_register(chip, HOST_SLEEP_STATE, 0x03, 1);
 					}
@@ -923,7 +923,7 @@ Delink_Stage:
 					RTSX_DEBUGP(("RTSX_BIPR: 0x%x\n", rtsx_readl(chip, RTSX_BIPR)));
 #endif
 					rtsx_write_register(chip, CHANGE_LINK_STATE, 0x02, 0x02);
-					
+
 					if (enter_L1) {
 						rtsx_enter_L1(chip);
 					}
@@ -932,17 +932,17 @@ Delink_Stage:
 
 			if (chip->auto_delink_cnt == delink_stage2_cnt) {
 				RTSX_DEBUGP(("Try to do force delink\n"));
-				
+
 				if (enter_L1) {
 					rtsx_exit_L1(chip);
 				}
-				
+
 				rtsx_write_register(chip, CHANGE_LINK_STATE, 0x0A, 0x0A);
 			}
-			
+
 			if (chip->auto_delink_cnt == delink_stage3_cnt) {
 			}
-			
+
 			chip->auto_delink_cnt ++;
 		}
 	} else {
@@ -962,12 +962,12 @@ void rtsx_undo_delink(struct rtsx_chip *chip)
  * @card: flash card type
  *
  * Stop command transfer and DMA transfer.
- * This function is called in error handler. 
+ * This function is called in error handler.
  */
 void rtsx_stop_cmd(struct rtsx_chip *chip, int card)
 {
 	int i;
-	
+
 	for (i = 0; i <= 8; i++) {
 		int addr = RTSX_HCBAR + i * 4;
 		u32 reg;
@@ -976,7 +976,7 @@ void rtsx_stop_cmd(struct rtsx_chip *chip, int card)
 	}
 	rtsx_writel(chip, RTSX_HCBCTLR, STOP_CMD);
 	rtsx_writel(chip, RTSX_HDBCTLR, STOP_DMA);
-	
+
 	for (i = 0; i < 16; i++) {
 		u16 addr = 0xFE20 + (u16)i;
 		u8 val;
@@ -1049,7 +1049,7 @@ int rtsx_write_cfg_dw(struct rtsx_chip *chip, u8 func_no, u16 addr, u32 mask, u3
 {
 	u8 mode = 0, tmp;
 	int i;
-	
+
 
 	for (i = 0; i < 4; i++) {
 		if (mask & 0xFF) {
@@ -1073,7 +1073,7 @@ int rtsx_write_cfg_dw(struct rtsx_chip *chip, u8 func_no, u16 addr, u32 mask, u3
 			}
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1082,7 +1082,7 @@ int rtsx_read_cfg_dw(struct rtsx_chip *chip, u8 func_no, u16 addr, u32 *val)
 	int i;
 	u8 tmp;
 	u32 data = 0;
-	
+
 
 	RTSX_WRITE_REG(chip, CFGADDR0, 0xFF, (u8)addr);
 	RTSX_WRITE_REG(chip, CFGADDR1, 0xFF, (u8)(addr >> 8));
@@ -1103,7 +1103,7 @@ int rtsx_read_cfg_dw(struct rtsx_chip *chip, u8 func_no, u16 addr, u32 *val)
 	if (val) {
 		*val = data;
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1114,33 +1114,33 @@ int rtsx_write_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int l
 	u16 aligned_addr = addr - offset;
 	int dw_len, i, j;
 	int retval;
-	
+
 	RTSX_DEBUGP(("%s\n", __FUNCTION__));
-	
+
 	if (!buf) {
 		TRACE_RET(chip, STATUS_NOMEM);
 	}
-	
+
 	if ((len + offset) % 4) {
 		dw_len = (len + offset) / 4 + 1;
 	} else {
 		dw_len = (len + offset) / 4;
 	}
 	RTSX_DEBUGP(("dw_len = %d\n", dw_len));
-	
+
 	data = (u32 *)vmalloc(dw_len * 4);
 	if (!data) {
 		TRACE_RET(chip, STATUS_NOMEM);
 	}
 	memset(data, 0, dw_len * 4);
-	
+
 	mask = (u32 *)vmalloc(dw_len * 4);
 	if (!mask) {
 		vfree(data);
 		TRACE_RET(chip, STATUS_NOMEM);
 	}
 	memset(mask, 0, dw_len * 4);
-	
+
 	j = 0;
 	for (i = 0; i < len; i++) {
 		mask[j] |= 0xFF << (offset * 8);
@@ -1150,10 +1150,10 @@ int rtsx_write_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int l
 			offset = 0;
 		}
 	}
-	
+
 	RTSX_DUMP(mask, dw_len * 4);
 	RTSX_DUMP(data, dw_len * 4);
-	
+
 	for (i = 0; i < dw_len; i++) {
 		retval = rtsx_write_cfg_dw(chip, func, aligned_addr + i * 4, mask[i], data[i]);
 		if (retval != STATUS_SUCCESS) {
@@ -1162,10 +1162,10 @@ int rtsx_write_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int l
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	vfree(data);
 	vfree(mask);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1176,21 +1176,21 @@ int rtsx_read_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int le
 	u16 aligned_addr = addr - offset;
 	int dw_len, i, j;
 	int retval;
-	
+
 	RTSX_DEBUGP(("%s\n", __FUNCTION__));
-	
+
 	if ((len + offset) % 4) {
 		dw_len = (len + offset) / 4 + 1;
 	} else {
 		dw_len = (len + offset) / 4;
 	}
 	RTSX_DEBUGP(("dw_len = %d\n", dw_len));
-	
+
 	data = (u32 *)vmalloc(dw_len * 4);
 	if (!data) {
 		TRACE_RET(chip, STATUS_NOMEM);
 	}
-	
+
 	for (i = 0; i < dw_len; i++) {
 		retval = rtsx_read_cfg_dw(chip, func, aligned_addr + i * 4, data + i);
 		if (retval != STATUS_SUCCESS) {
@@ -1198,10 +1198,10 @@ int rtsx_read_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int le
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	if (buf) {
 		j = 0;
-		
+
 		for (i = 0; i < len; i++) {
 			buf[i] = (u8)(data[j] >> (offset * 8));
 			if (++offset == 4) {
@@ -1210,9 +1210,9 @@ int rtsx_read_cfg_seq(struct rtsx_chip *chip, u8 func, u16 addr, u8 *buf, int le
 			}
 		}
 	}
-	
+
 	vfree(data);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1234,11 +1234,11 @@ int rtsx_write_phy_register(struct rtsx_chip *chip, u8 addr, u16 val)
 			break;
 		}
 	}
-	
+
 	if (!finished) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1258,7 +1258,7 @@ int rtsx_read_phy_register(struct rtsx_chip *chip, u8 addr, u16 *val)
 			break;
 		}
 	}
-	
+
 	if (!finished) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
@@ -1271,7 +1271,7 @@ int rtsx_read_phy_register(struct rtsx_chip *chip, u8 addr, u16 *val)
 	if (val) {
 		*val = data;
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1279,7 +1279,7 @@ int rtsx_clr_phy_reg_bit(struct rtsx_chip *chip, u8 reg, u8 bit)
 {
 	int retval;
 	u16 value;
-	
+
 	retval = rtsx_read_phy_register(chip, reg, &value);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -1291,7 +1291,7 @@ int rtsx_clr_phy_reg_bit(struct rtsx_chip *chip, u8 reg, u8 bit)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1299,7 +1299,7 @@ int rtsx_set_phy_reg_bit(struct rtsx_chip *chip, u8 reg, u8 bit)
 {
 	int retval;
 	u16 value;
-	
+
 	retval = rtsx_read_phy_register(chip, reg, &value);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -1311,7 +1311,7 @@ int rtsx_set_phy_reg_bit(struct rtsx_chip *chip, u8 reg, u8 bit)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1320,7 +1320,7 @@ int rtsx_check_link_ready(struct rtsx_chip *chip)
 	u8 val;
 
 	RTSX_READ_REG(chip, IRQSTAT0, &val);
-	
+
 	RTSX_DEBUGP(("IRQSTAT0: 0x%x\n", val));
 	if (val & LINK_RDY_INT) {
 		RTSX_DEBUGP(("Delinked!\n"));
@@ -1336,7 +1336,7 @@ int rtsx_check_link_ready(struct rtsx_chip *chip)
 static void rtsx_handle_pm_dstate(struct rtsx_chip *chip, u8 dstate)
 {
 	RTSX_DEBUGP(("%04x set pm_dstate to %d\n", chip->product_id, dstate));
-	
+
 	rtsx_write_config_byte(chip, 0x44, dstate);
 	rtsx_write_config_byte(chip, 0x45, 0);
 }
@@ -1355,19 +1355,19 @@ void rtsx_exit_L1(struct rtsx_chip *chip)
 void rtsx_enter_ss(struct rtsx_chip *chip)
 {
 	RTSX_DEBUGP(("Enter Selective Suspend State!\n"));
-	
+
 	rtsx_write_register(chip, IRQSTAT0, LINK_RDY_INT, LINK_RDY_INT);
 
 	if (chip->power_down_in_ss) {
 		rtsx_power_off_card(chip);
-	
+
 		rtsx_force_power_down(chip, SSC_PDCTL | OC_PDCTL);
 	}
 
 	if (CHK_AUTODELINK_EN(chip)) {
 		rtsx_write_register(chip, HOST_SLEEP_STATE, 0x01, 0x01);
 	} else {
-		if (!chip->phy_debug_mode) {		
+		if (!chip->phy_debug_mode) {
 			u32 tmp;
 			tmp = rtsx_readl(chip,RTSX_BIER) ;
 			tmp |= CARD_INT;
@@ -1380,7 +1380,7 @@ void rtsx_enter_ss(struct rtsx_chip *chip)
 	rtsx_enter_L1(chip);
 
 	RTSX_CLR_DELINK(chip);
-	
+
 	rtsx_set_stat(chip, RTSX_STAT_SS);
 }
 
@@ -1415,31 +1415,31 @@ int rtsx_pre_handle_interrupt(struct rtsx_chip *chip)
 
 	ocp_int = SD_OC_INT;
 #endif
-	
+
 	if (chip->ss_en) {
 		chip->ss_counter = 0;
 		if (rtsx_get_stat(chip) == RTSX_STAT_SS) {
 			exit_ss = 1;
 			rtsx_exit_L1(chip);
-			
+
 			rtsx_set_stat(chip, RTSX_STAT_RUN);
 		}
 	}
 
 	int_enable = rtsx_readl(chip, RTSX_BIER);
-	
+
 	chip->int_reg = rtsx_readl(chip, RTSX_BIPR);
 
 #ifdef HW_INT_WRITE_CLR
 	rtsx_writel(chip, RTSX_BIPR, chip->int_reg);
 #endif
-	
+
 	if (((chip->int_reg & int_enable) == 0) || (chip->int_reg == 0xFFFFFFFF)) {
 		return STATUS_FAIL;
 	}
-	
+
 	status = chip->int_reg &= (int_enable | 0x7FFFFF);
-	
+
 	if (status & CARD_INT) {
 		chip->auto_delink_cnt = 0;
 
@@ -1477,34 +1477,34 @@ int rtsx_pre_handle_interrupt(struct rtsx_chip *chip)
 			}
 		}
 	}
-	
+
 #ifdef SUPPORT_OCP
 	chip->ocp_int = ocp_int & status;
 #endif
-	
-	return STATUS_SUCCESS;	
+
+	return STATUS_SUCCESS;
 }
 
 void rtsx_do_before_power_down(struct rtsx_chip *chip, int pm_stat)
 {
 	int retval;
-	
+
 	RTSX_DEBUGP(("rtsx_do_before_power_down, pm_stat = %d\n", pm_stat));
-	
+
 	rtsx_set_stat(chip, RTSX_STAT_SUSPEND);
-	
+
 	retval = rtsx_force_power_on(chip, SSC_PDCTL);
 	if (retval != STATUS_SUCCESS) {
 		return;
 	}
-	
+
 	rtsx_release_cards(chip);
 	rtsx_disable_bus_int(chip);
 	if (chip->blink_led)
 		turn_off_led(chip);
-	
+
 	rtsx_write_register(chip, PETXCFG, 0x08, 0x08);
-	
+
 	if (pm_stat == PM_S1) {
 		RTSX_DEBUGP(("Host enter S1\n"));
 		rtsx_write_register(chip, HOST_SLEEP_STATE, 0x03, HOST_ENTER_S1);
@@ -1515,17 +1515,17 @@ void rtsx_do_before_power_down(struct rtsx_chip *chip, int pm_stat)
 		RTSX_DEBUGP(("Host enter S3\n"));
 		rtsx_write_register(chip, HOST_SLEEP_STATE, 0x03, HOST_ENTER_S3);
 	}
-	
+
 	if (chip->do_delink_before_power_down && CHK_AUTODELINK_EN(chip)) {
 		rtsx_write_register(chip, CHANGE_LINK_STATE, 0x02, 2);
 	}
-	
-	
+
+
 	rtsx_force_power_down(chip, SSC_PDCTL | OC_PDCTL);
-	
+
 	chip->cur_clk = 0;
 	chip->cur_card = 0;
-	
+
 	chip->card_exist = 0;
 }
 
@@ -1535,12 +1535,12 @@ void rtsx_enable_aspm(struct rtsx_chip *chip)
 		if (!chip->aspm_enabled) {
 			RTSX_DEBUGP(("Try to enable ASPM\n"));
 			chip->aspm_enabled = 1;
-			
+
 			if (chip->asic_code) {
 				rtsx_write_phy_register(chip, 0x07, 0);
 			}
 			rtsx_write_config_byte(chip, LCTLR, chip->aspm_l0s_l1_en);
-			
+
 			if (chip->config_host_aspm) {
 				rtsx_set_host_aspm(chip, chip->host_aspm_val);
 			}
@@ -1560,13 +1560,13 @@ void rtsx_disable_aspm(struct rtsx_chip *chip)
 			if (chip->config_host_aspm) {
 				rtsx_disable_host_aspm(chip);
 			}
-			
+
 			rtsx_write_config_byte(chip, LCTLR, 0x00);
 			wait_timeout(1);
 		}
 	}
 
-	return;	
+	return;
 }
 
 void rtsx_enter_work_state(struct rtsx_chip *chip)
@@ -1583,39 +1583,39 @@ int rtsx_read_ppbuf(struct rtsx_chip *chip, u8 *buf, int buf_len)
 	int i;
 	u16 reg_addr;
 	u8 *ptr;
-	
+
 	if (!buf) {
 		TRACE_RET(chip, STATUS_ERROR);
 	}
-	
+
 	ptr = buf;
 	reg_addr = PPBUF_BASE2;
 #ifdef USING_PPBUF
 	for (i = 0; i < buf_len/256; i++) {
 		int j;
-		
+
 		rtsx_init_cmd(chip);
-		
+
 		for (j = 0; j < 256; j++) {
 			rtsx_add_cmd(chip, READ_REG_CMD, reg_addr++, 0, 0);
 		}
-		
+
 		retval = rtsx_send_cmd(chip, 0, 250);
 		if (retval < 0) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		memcpy(ptr, rtsx_get_cmd_data(chip), 256);
 		ptr += 256;
 	}
-	
+
 	if (buf_len%256) {
 		rtsx_init_cmd(chip);
-		
+
 		for (i = 0; i < buf_len%256; i++) {
 			rtsx_add_cmd(chip, READ_REG_CMD, reg_addr++, 0, 0);
 		}
-		
+
 		retval = rtsx_send_cmd(chip, 0, 250);
 		if (retval < 0) {
 			TRACE_RET(chip, STATUS_FAIL);
@@ -1623,19 +1623,19 @@ int rtsx_read_ppbuf(struct rtsx_chip *chip, u8 *buf, int buf_len)
 	}
 #else
 	rtsx_init_cmd(chip);
-	
+
 	for (i = 0; i < buf_len%256; i++) {
 		rtsx_add_cmd(chip, READ_REG_CMD, reg_addr++, 0, 0);
 	}
-	
+
 	retval = rtsx_send_cmd(chip, 0, 250);
 	if (retval < 0) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 #endif
-	
+
 	memcpy(ptr, rtsx_get_cmd_data(chip), buf_len%256);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1645,38 +1645,38 @@ int rtsx_write_ppbuf(struct rtsx_chip *chip, u8 *buf, int buf_len)
 	int i;
 	u16 reg_addr;
 	u8 *ptr;
-	
+
 	if (!buf) {
 		TRACE_RET(chip, STATUS_ERROR);
 	}
-	
+
 	ptr = buf;
 	reg_addr = PPBUF_BASE2;
 #ifdef USING_PPBUF
 	for (i = 0; i < buf_len/256; i++) {
 		int j;
-		
+
 		rtsx_init_cmd(chip);
-		
+
 		for (j = 0; j < 256; j++) {
 			rtsx_add_cmd(chip, WRITE_REG_CMD, reg_addr++, 0xFF, *ptr);
 			ptr++;
 		}
-		
+
 		retval = rtsx_send_cmd(chip, 0, 250);
 		if (retval < 0) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	if (buf_len%256) {
 		rtsx_init_cmd(chip);
-		
+
 		for (i = 0; i < buf_len%256; i++) {
 			rtsx_add_cmd(chip, WRITE_REG_CMD, reg_addr++, 0xFF, *ptr);
 			ptr++;
 		}
-		
+
 		retval = rtsx_send_cmd(chip, 0, 250);
 		if (retval < 0) {
 			TRACE_RET(chip, STATUS_FAIL);
@@ -1684,18 +1684,18 @@ int rtsx_write_ppbuf(struct rtsx_chip *chip, u8 *buf, int buf_len)
 	}
 #else
 	rtsx_init_cmd(chip);
-	
+
 	for (i = 0; i < buf_len%256; i++) {
 		rtsx_add_cmd(chip, WRITE_REG_CMD, reg_addr++, 0xFF, *ptr);
 		ptr++;
 	}
-	
+
 	retval = rtsx_send_cmd(chip, 0, 250);
 	if (retval < 0) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 #endif
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1704,7 +1704,7 @@ int rtsx_check_chip_exist(struct rtsx_chip *chip)
 	if (rtsx_readl(chip, 0) == 0xFFFFFFFF) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1712,24 +1712,24 @@ int rtsx_force_power_on(struct rtsx_chip *chip, u8 ctl)
 {
 	int retval;
 	u8 mask = 0;
-	
+
 	if (ctl & SSC_PDCTL) {
 		mask |= SSC_POWER_DOWN;
 	}
-	
+
 #ifdef SUPPORT_OCP
 	if (ctl & OC_PDCTL) {
 		mask |= SD_OC_POWER_DOWN;
 	}
 #endif
-	
+
 	if (mask) {
 		retval = rtsx_write_register(chip, FPDCTL, mask, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1737,17 +1737,17 @@ int rtsx_force_power_down(struct rtsx_chip *chip, u8 ctl)
 {
 	int retval;
 	u8 mask = 0, val = 0;
-	
+
 	if (ctl & SSC_PDCTL) {
 		mask |= SSC_POWER_DOWN;
 	}
-	
+
 #ifdef SUPPORT_OCP
 	if (ctl & OC_PDCTL) {
 		mask |= SD_OC_POWER_DOWN;
 	}
 #endif
-	
+
 	if (mask) {
 		val = mask;
 		retval = rtsx_write_register(chip, FPDCTL, mask, val);
@@ -1755,7 +1755,7 @@ int rtsx_force_power_down(struct rtsx_chip *chip, u8 ctl)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1763,7 +1763,7 @@ void rtsx_wait_rb_full(struct rtsx_chip *chip)
 {
 	int i;
 	u8 val;
-	
+
 	for (i = 0; i < 1000; i++) {
 		if (rtsx_read_register(chip, RBCTL, &val)) {
 			break;
@@ -1771,7 +1771,7 @@ void rtsx_wait_rb_full(struct rtsx_chip *chip)
 		if (val & RB_FULL) {
 			break;
 		}
-		
+
 		mdelay(1);
 	}
 }
@@ -1781,7 +1781,7 @@ void rtsx_set_stat(struct rtsx_chip *chip, enum RTSX_STAT stat)
 	if (stat != RTSX_STAT_IDLE) {
 		chip->idle_counter = 0;
 	}
-	
+
 	if (chip->rtsx_stat != stat) {
 		chip->rtsx_stat = stat;
 #ifdef LED_AUTO_BLINK

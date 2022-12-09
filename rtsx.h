@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -115,28 +115,28 @@ struct rtsx_chip;
 struct rtsx_dev {
 	struct pci_dev 		*pci;
 
-	
+
 	unsigned long 		addr;
 	void __iomem 		*remap_addr;
 	int 			irq;
 
-	
+
 	spinlock_t 		reg_lock;
-	
-	struct task_struct	*ctl_thread;	 
-	struct task_struct	*polling_thread; 
 
-	
-	struct completion	cmnd_ready;	 
-	struct completion	control_exit;	 
-	struct completion	polling_exit;	 
-	struct completion	notify;		 
-	struct completion	scanning_done;	 
+	struct task_struct	*ctl_thread;
+	struct task_struct	*polling_thread;
 
-	wait_queue_head_t	delay_wait;	 
+
+	struct completion	cmnd_ready;
+	struct completion	control_exit;
+	struct completion	polling_exit;
+	struct completion	notify;
+	struct completion	scanning_done;
+
+	wait_queue_head_t	delay_wait;
 	struct mutex		dev_mutex;
 
-	
+
 	void 			*rtsx_resv_buf;
 	dma_addr_t 		rtsx_resv_buf_addr;
 
@@ -144,7 +144,7 @@ struct rtsx_dev {
 	char			trans_state;
 
 	struct completion 	*done;
-	
+
 	u32 			check_card_cd;
 
 	struct rtsx_chip 	*chip;
@@ -210,5 +210,5 @@ static inline void GetHostASPM(struct rtsx_chip *chip, u8 *val)
 
 int rtsx_read_pci_cfg_byte(u8 bus, u8 dev, u8 func, u8 offset, u8 *val);
 
-#endif  
+#endif
 

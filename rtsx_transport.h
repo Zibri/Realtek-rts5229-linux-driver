@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -41,7 +41,7 @@ void rtsx_invoke_transport(struct scsi_cmnd *srb, struct rtsx_chip *chip);
 
 #define rtsx_init_cmd(chip)			((chip)->ci = 0)
 
-void rtsx_add_cmd(struct rtsx_chip *chip, 
+void rtsx_add_cmd(struct rtsx_chip *chip,
 		u8 cmd_type, u16 reg_addr, u8 mask, u8 data);
 void rtsx_send_cmd_no_wait(struct rtsx_chip *chip);
 int rtsx_send_cmd(struct rtsx_chip *chip, u8 card, int timeout);
@@ -55,12 +55,12 @@ extern inline u8 *rtsx_get_cmd_data(struct rtsx_chip *chip)
 #endif
 }
 
-int rtsx_transfer_data(struct rtsx_chip *chip, u8 card, void *buf, size_t len, 
+int rtsx_transfer_data(struct rtsx_chip *chip, u8 card, void *buf, size_t len,
 		int use_sg, enum dma_data_direction dma_dir, int timeout);
 
-int rtsx_transfer_data_partial(struct rtsx_chip *chip, u8 card, void *buf, size_t len, 
-		int use_sg, unsigned int *index, unsigned int *offset, 
+int rtsx_transfer_data_partial(struct rtsx_chip *chip, u8 card, void *buf, size_t len,
+		int use_sg, unsigned int *index, unsigned int *offset,
 		enum dma_data_direction dma_dir, int timeout);
 
-#endif   
+#endif
 

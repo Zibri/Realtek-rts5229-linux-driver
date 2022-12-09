@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -102,28 +102,28 @@
 #define	TYPE_C_DRIVING			0x02
 #define	TYPE_D_DRIVING		        0x03
 
-#define	DDR_FIX_RX_DAT			0x00 
-#define	DDR_VAR_RX_DAT			0x80 
-#define	DDR_FIX_RX_DAT_EDGE		0x00 
-#define	DDR_FIX_RX_DAT_14_DELAY		0x40 
-#define	DDR_FIX_RX_CMD			0x00 
-#define	DDR_VAR_RX_CMD			0x20 
-#define	DDR_FIX_RX_CMD_POS_EDGE		0x00 
-#define	DDR_FIX_RX_CMD_14_DELAY		0x10 
-#define	SD20_RX_POS_EDGE		0x00 
+#define	DDR_FIX_RX_DAT			0x00
+#define	DDR_VAR_RX_DAT			0x80
+#define	DDR_FIX_RX_DAT_EDGE		0x00
+#define	DDR_FIX_RX_DAT_14_DELAY		0x40
+#define	DDR_FIX_RX_CMD			0x00
+#define	DDR_VAR_RX_CMD			0x20
+#define	DDR_FIX_RX_CMD_POS_EDGE		0x00
+#define	DDR_FIX_RX_CMD_14_DELAY		0x10
+#define	SD20_RX_POS_EDGE		0x00
 #define	SD20_RX_14_DELAY		0x08
 #define SD20_RX_SEL_MASK		0x08
 
-#define	DDR_FIX_TX_CMD_DAT		0x00 
-#define	DDR_VAR_TX_CMD_DAT		0x80 
-#define	DDR_FIX_TX_DAT_14_TSU		0x00 
-#define	DDR_FIX_TX_DAT_12_TSU		0x40 
-#define	DDR_FIX_TX_CMD_NEG_EDGE		0x00 
-#define	DDR_FIX_TX_CMD_14_AHEAD		0x20 
+#define	DDR_FIX_TX_CMD_DAT		0x00
+#define	DDR_VAR_TX_CMD_DAT		0x80
+#define	DDR_FIX_TX_DAT_14_TSU		0x00
+#define	DDR_FIX_TX_DAT_12_TSU		0x40
+#define	DDR_FIX_TX_CMD_NEG_EDGE		0x00
+#define	DDR_FIX_TX_CMD_14_AHEAD		0x20
 #define	SD20_TX_NEG_EDGE		0x00
 #define	SD20_TX_14_AHEAD		0x10
 #define SD20_TX_SEL_MASK		0x10
-#define	DDR_VAR_SDCLK_POL_SWAP		0x01 
+#define	DDR_VAR_SDCLK_POL_SWAP		0x01
 
 #define	SD_TRANSFER_START		0x80
 #define	SD_TRANSFER_END			0x40
@@ -134,7 +134,7 @@
 #define	SD_TM_AUTO_WRITE_4		0x02
 #define	SD_TM_AUTO_READ_3		0x05
 #define	SD_TM_AUTO_READ_4		0x06
-#define	SD_TM_CMD_RSP			0x08		
+#define	SD_TM_CMD_RSP			0x08
 #define	SD_TM_AUTO_WRITE_1		0x09
 #define	SD_TM_AUTO_WRITE_2		0x0A
 #define	SD_TM_NORMAL_READ		0x0C
@@ -190,21 +190,21 @@
 #define	SD_NO_CHECK_CRC16		0x40
 #define SD_NO_CHECK_WAIT_CRC_TO		0x20
 #define	SD_WAIT_BUSY_END		0x08
-#define	SD_NO_WAIT_BUSY_END		0x00	
+#define	SD_NO_WAIT_BUSY_END		0x00
 #define	SD_CHECK_CRC7			0x00
 #define	SD_NO_CHECK_CRC7		0x04
 #define	SD_RSP_LEN_0			0x00
-#define	SD_RSP_LEN_6			0x01			
+#define	SD_RSP_LEN_6			0x01
 #define	SD_RSP_LEN_17			0x02
-#define	SD_RSP_TYPE_R0		0x04	 
-#define	SD_RSP_TYPE_R1		0x01	
-#define	SD_RSP_TYPE_R1b		0x09	
-#define	SD_RSP_TYPE_R2		0x02	
-#define	SD_RSP_TYPE_R3		0x05	
-#define	SD_RSP_TYPE_R4		0x05	
-#define	SD_RSP_TYPE_R5		0x01	
-#define	SD_RSP_TYPE_R6		0x01	
-#define	SD_RSP_TYPE_R7		0x01	
+#define	SD_RSP_TYPE_R0		0x04
+#define	SD_RSP_TYPE_R1		0x01
+#define	SD_RSP_TYPE_R1b		0x09
+#define	SD_RSP_TYPE_R2		0x02
+#define	SD_RSP_TYPE_R3		0x05
+#define	SD_RSP_TYPE_R4		0x05
+#define	SD_RSP_TYPE_R5		0x01
+#define	SD_RSP_TYPE_R6		0x01
+#define	SD_RSP_TYPE_R7		0x01
 
 #define	SD_RSP_80CLK_TIMEOUT_EN	    0x01
 
@@ -226,12 +226,12 @@
 #define	WAIT_INT			0x80
 #define	NO_WAIT_INT			0x00
 #define	NO_AUTO_READ_INT_REG		0x00
-#define	AUTO_READ_INT_REG		0x40	
+#define	AUTO_READ_INT_REG		0x40
 #define	MS_CRC16_ERR			0x20
 #define	MS_RDY_TIMEOUT			0x10
 #define	MS_INT_CMDNK			0x08
 #define	MS_INT_BREQ			0x04
-#define	MS_INT_ERR			0x02 
+#define	MS_INT_ERR			0x02
 #define	MS_INT_CED			0x01
 
 #define	MS_TRANSFER_START		0x80
@@ -720,7 +720,7 @@ static inline u32 get_card_size(struct rtsx_chip *chip, unsigned int lun)
 {
 #ifdef SUPPORT_SD_LOCK
 	struct sd_info *sd_card = &(chip->sd_card);
-	
+
 	if ((get_lun_card(chip, lun) == SD_CARD) && (sd_card->sd_lock_status & SD_LOCKED)) {
 		return 0;
 	} else {
@@ -750,7 +750,7 @@ int card_power_off(struct rtsx_chip *chip, u8 card);
 static inline int card_power_off_all(struct rtsx_chip *chip)
 {
 	RTSX_WRITE_REG(chip, CARD_PWR_CTL, 0x0F, 0x0F);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -764,5 +764,5 @@ static inline void rtsx_clear_ms_error(struct rtsx_chip *chip)
 	rtsx_write_register(chip, CARD_STOP, MS_STOP | MS_CLR_ERR, MS_STOP | MS_CLR_ERR);
 }
 
-#endif  
+#endif
 

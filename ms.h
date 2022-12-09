@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -148,24 +148,24 @@
 #define	NOT_BOOT_BLOCK		0x4
 #define	NOT_TRANSLATION_TABLE	0x8
 
-#define	HEADER_ID0		PPBUF_BASE2			
-#define	HEADER_ID1		PPBUF_BASE2 + 1			
-#define	DISABLED_BLOCK0		PPBUF_BASE2 + 0x170 + 4		
-#define	DISABLED_BLOCK1		PPBUF_BASE2 + 0x170 + 5		
-#define	DISABLED_BLOCK2		PPBUF_BASE2 + 0x170 + 6		
-#define	DISABLED_BLOCK3		PPBUF_BASE2 + 0x170 + 7		
-#define	BLOCK_SIZE_0		PPBUF_BASE2 + 0x1a0 + 2		
-#define	BLOCK_SIZE_1		PPBUF_BASE2 + 0x1a0 + 3		
-#define	BLOCK_COUNT_0		PPBUF_BASE2 + 0x1a0 + 4		
-#define	BLOCK_COUNT_1		PPBUF_BASE2 + 0x1a0 + 5		
-#define	EBLOCK_COUNT_0		PPBUF_BASE2 + 0x1a0 + 6		
-#define	EBLOCK_COUNT_1		PPBUF_BASE2 + 0x1a0 + 7		
-#define	PAGE_SIZE_0		PPBUF_BASE2 + 0x1a0 + 8		
-#define	PAGE_SIZE_1		PPBUF_BASE2 + 0x1a0 + 9		
+#define	HEADER_ID0		PPBUF_BASE2
+#define	HEADER_ID1		PPBUF_BASE2 + 1
+#define	DISABLED_BLOCK0		PPBUF_BASE2 + 0x170 + 4
+#define	DISABLED_BLOCK1		PPBUF_BASE2 + 0x170 + 5
+#define	DISABLED_BLOCK2		PPBUF_BASE2 + 0x170 + 6
+#define	DISABLED_BLOCK3		PPBUF_BASE2 + 0x170 + 7
+#define	BLOCK_SIZE_0		PPBUF_BASE2 + 0x1a0 + 2
+#define	BLOCK_SIZE_1		PPBUF_BASE2 + 0x1a0 + 3
+#define	BLOCK_COUNT_0		PPBUF_BASE2 + 0x1a0 + 4
+#define	BLOCK_COUNT_1		PPBUF_BASE2 + 0x1a0 + 5
+#define	EBLOCK_COUNT_0		PPBUF_BASE2 + 0x1a0 + 6
+#define	EBLOCK_COUNT_1		PPBUF_BASE2 + 0x1a0 + 7
+#define	PAGE_SIZE_0		PPBUF_BASE2 + 0x1a0 + 8
+#define	PAGE_SIZE_1		PPBUF_BASE2 + 0x1a0 + 9
 
-#define MS_Device_Type		PPBUF_BASE2 + 0x1D8		
+#define MS_Device_Type		PPBUF_BASE2 + 0x1D8
 
-#define	MS_4bit_Support	PPBUF_BASE2 + 0x1D3			
+#define	MS_4bit_Support	PPBUF_BASE2 + 0x1D3
 
 #define setPS_NG	1
 #define setPS_Error	0
@@ -222,5 +222,5 @@ int mg_get_ICV(struct scsi_cmnd *srb, struct rtsx_chip *chip);
 int mg_set_ICV(struct scsi_cmnd *srb, struct rtsx_chip *chip);
 #endif
 
-#endif  
+#endif
 

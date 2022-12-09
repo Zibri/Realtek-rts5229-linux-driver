@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -32,7 +32,7 @@
 #define SUPPORT_MAGIC_GATE
 #define SUPPORT_MSXC
 #define SUPPORT_SD_LOCK
-#define HW_INT_WRITE_CLR		
+#define HW_INT_WRITE_CLR
 #define LED_AUTO_BLINK
 #define USING_PPBUF
 
@@ -53,7 +53,7 @@
 #define LED_TOGGLE_INTERVAL	6
 #define	GPIO_TOGGLE_THRESHOLD   1024
 
-#define POLLING_INTERVAL	30	
+#define POLLING_INTERVAL	30
 
 #define TRACE_ITEM_CNT		64
 
@@ -86,19 +86,19 @@
  * Transport return codes
  */
 
-#define TRANSPORT_GOOD	   	0   
-#define TRANSPORT_FAILED  	1   
-#define TRANSPORT_NO_SENSE 	2  
-#define TRANSPORT_ERROR   	3   
+#define TRANSPORT_GOOD	   	0
+#define TRANSPORT_FAILED  	1
+#define TRANSPORT_NO_SENSE 	2
+#define TRANSPORT_ERROR   	3
 
 
 /*-----------------------------------
     Start-Stop-Unit
 -----------------------------------*/
-#define STOP_MEDIUM			0x00    
-#define MAKE_MEDIUM_READY		0x01    
-#define UNLOAD_MEDIUM			0x02    
-#define LOAD_MEDIUM			0x03    
+#define STOP_MEDIUM			0x00
+#define MAKE_MEDIUM_READY		0x01
+#define UNLOAD_MEDIUM			0x02
+#define LOAD_MEDIUM			0x03
 
 /*-----------------------------------
     STANDARD_INQUIRY
@@ -114,49 +114,49 @@
 #define CMD_QUE                 0x00
 #define SFT_RE                  0x00
 
-#define VEN_ID_LEN              8               
-#define PRDCT_ID_LEN            16              
-#define PRDCT_REV_LEN           4               
+#define VEN_ID_LEN              8
+#define PRDCT_ID_LEN            16
+#define PRDCT_REV_LEN           4
 
 
 
-#define RTSX_FLIDX_TRANS_ACTIVE		18  
-#define RTSX_FLIDX_ABORTING		20  
-#define RTSX_FLIDX_DISCONNECTING	21  
+#define RTSX_FLIDX_TRANS_ACTIVE		18
+#define RTSX_FLIDX_ABORTING		20
+#define RTSX_FLIDX_DISCONNECTING	21
 #define ABORTING_OR_DISCONNECTING	((1UL << US_FLIDX_ABORTING) | \
 					 (1UL << US_FLIDX_DISCONNECTING))
-#define RTSX_FLIDX_RESETTING		22  
-#define RTSX_FLIDX_TIMED_OUT		23  
+#define RTSX_FLIDX_RESETTING		22
+#define RTSX_FLIDX_TIMED_OUT		23
 
 
 
-#define DRCT_ACCESS_DEV         0x00    
-#define RMB_DISC                0x80    
-#define ANSI_SCSI2              0x02    
+#define DRCT_ACCESS_DEV         0x00
+#define RMB_DISC                0x80
+#define ANSI_SCSI2              0x02
 
-#define SCSI                    0x00    
+#define SCSI                    0x00
 
 
 #define	WRITE_PROTECTED_MEDIA 0x07
 
 
-#define ILI                     0x20    
+#define ILI                     0x20
 
-#define NO_SENSE                0x00    
-#define RECOVER_ERR             0x01    
-#define NOT_READY               0x02    
-#define MEDIA_ERR               0x03    
-#define HARDWARE_ERR            0x04    
-#define ILGAL_REQ               0x05    
-#define UNIT_ATTENTION          0x06    
-#define DAT_PRTCT               0x07    
-#define BLNC_CHK                0x08    
-                                        
-#define CPY_ABRT                0x0a    
-#define ABRT_CMD                0x0b    
-#define EQUAL                   0x0c    
-#define VLM_OVRFLW              0x0d    
-#define MISCMP                  0x0e    
+#define NO_SENSE                0x00
+#define RECOVER_ERR             0x01
+#define NOT_READY               0x02
+#define MEDIA_ERR               0x03
+#define HARDWARE_ERR            0x04
+#define ILGAL_REQ               0x05
+#define UNIT_ATTENTION          0x06
+#define DAT_PRTCT               0x07
+#define BLNC_CHK                0x08
+
+#define CPY_ABRT                0x0a
+#define ABRT_CMD                0x0b
+#define EQUAL                   0x0c
+#define VLM_OVRFLW              0x0d
+#define MISCMP                  0x0e
 
 #define READ_ERR                -1
 #define WRITE_ERR               -2
@@ -168,28 +168,28 @@
     SENSE_DATA
 -----------------------------------*/
 
-#define SENSE_VALID             0x80    
-#define SENSE_INVALID           0x00    
+#define SENSE_VALID             0x80
+#define SENSE_INVALID           0x00
 
 
-#define CUR_ERR                 0x70    
-#define DEF_ERR                 0x71    
+#define CUR_ERR                 0x70
+#define DEF_ERR                 0x71
 
 
-#define SNSKEYINFO_LEN          3       
+#define SNSKEYINFO_LEN          3
 
 #define SKSV                    0x80
 #define CDB_ILLEGAL             0x40
 #define DAT_ILLEGAL             0x00
 #define BPV                     0x08
-#define BIT_ILLEGAL0            0       
-#define BIT_ILLEGAL1            1       
-#define BIT_ILLEGAL2            2       
-#define BIT_ILLEGAL3            3       
-#define BIT_ILLEGAL4            4       
-#define BIT_ILLEGAL5            5       
-#define BIT_ILLEGAL6            6       
-#define BIT_ILLEGAL7            7       
+#define BIT_ILLEGAL0            0
+#define BIT_ILLEGAL1            1
+#define BIT_ILLEGAL2            2
+#define BIT_ILLEGAL3            3
+#define BIT_ILLEGAL4            4
+#define BIT_ILLEGAL5            5
+#define BIT_ILLEGAL6            6
+#define BIT_ILLEGAL7            7
 
 
 #define ASC_NO_INFO             0x00
@@ -220,23 +220,23 @@
 
 
 struct sense_data_t {
-    unsigned char   err_code;			
-							
-							
-							
-							
-							
-							
-    unsigned char   seg_no;			
-    unsigned char   sense_key;			
-							
-    unsigned char   info[4];			
-    unsigned char   ad_sense_len;		
-    unsigned char   cmd_info[4];		
-    unsigned char   asc;			
-    unsigned char   ascq;			
-    unsigned char   rfu;			
-    unsigned char   sns_key_info[3];		
+    unsigned char   err_code;
+
+
+
+
+
+
+    unsigned char   seg_no;
+    unsigned char   sense_key;
+
+    unsigned char   info[4];
+    unsigned char   ad_sense_len;
+    unsigned char   cmd_info[4];
+    unsigned char   asc;
+    unsigned char   ascq;
+    unsigned char   rfu;
+    unsigned char   sns_key_info[3];
 };
 
 
@@ -328,7 +328,7 @@ typedef int (*card_rw_func)(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 s
 
 enum card_clock	{CLK_20 = 1, CLK_30, CLK_40, CLK_50, CLK_60, CLK_80, CLK_100, CLK_120, CLK_150, CLK_200};
 
-enum RTSX_STAT	{RTSX_STAT_INIT, RTSX_STAT_IDLE, RTSX_STAT_RUN, RTSX_STAT_SS, 
+enum RTSX_STAT	{RTSX_STAT_INIT, RTSX_STAT_IDLE, RTSX_STAT_RUN, RTSX_STAT_SS,
 		RTSX_STAT_DELINK, RTSX_STAT_SUSPEND, RTSX_STAT_ABORT, RTSX_STAT_DISCONNECT};
 enum IC_VER	{IC_VER_A, IC_VER_B, IC_VER_C};
 
@@ -339,12 +339,12 @@ enum IC_VER	{IC_VER_A, IC_VER_B, IC_VER_C};
 struct zone_entry {
 	u16 *l2p_table;
 	u16 *free_table;
-	u16 defect_list[MAX_DEFECTIVE_BLOCK];  
+	u16 defect_list[MAX_DEFECTIVE_BLOCK];
 	int set_index;
 	int get_index;
-	int unused_blk_cnt;	
+	int unused_blk_cnt;
 	int disable_count;
-	int build_flag;   
+	int build_flag;
 };
 
 #define TYPE_SD			0x0000
@@ -449,9 +449,9 @@ struct sd_info {
 	int cleanup_counter;
 
 	int sd_clock;
-	
+
 	int mmc_dont_switch_bus;
-	
+
 #ifdef SUPPORT_CPRM
 	int sd_pass_thru_en;
 	int pre_cmd_err;
@@ -468,7 +468,7 @@ struct sd_info {
 
 	u8 sd_switch_fail;
 	u8 sd_read_phase;
-	
+
 #ifdef SUPPORT_SD_LOCK
 	u8 sd_lock_status;
 	u8 sd_erase_status;
@@ -515,7 +515,7 @@ struct ms_info {
 	u32 capacity;
 
 	u8 check_ms_flow;
-	u8 switch_8bit_fail;	
+	u8 switch_8bit_fail;
 	u8 err_code;
 
 	struct zone_entry *segment;
@@ -526,7 +526,7 @@ struct ms_info {
 	u16 progress;
 	u8 raw_sys_info[96];
 	u8 raw_ms_id[16];
-#ifdef SUPPORT_PCGL_1P18	
+#ifdef SUPPORT_PCGL_1P18
 	u8 raw_model_name[48];
 #endif
 
@@ -543,11 +543,11 @@ struct ms_info {
 	int cleanup_counter;
 
 	int ms_clock;
-	
+
 #ifdef SUPPORT_MAGIC_GATE
 	u8 magic_gate_id[16];
 	u8 mg_entry_num;
-	int mg_auth;    
+	int mg_auth;
 #endif
 };
 
@@ -619,44 +619,44 @@ struct rts5229_auto_load_map {
 struct rtsx_chip {
 	rtsx_dev_t 		*rtsx;
 
-	u32 			int_reg;			
+	u32 			int_reg;
 	char 			max_lun;
 	void 			*context;
 
-	void 			*host_cmds_ptr;			
+	void 			*host_cmds_ptr;
 	dma_addr_t		host_cmds_addr;
-	int 			ci;				
+	int 			ci;
 
-	void			*host_sg_tbl_ptr;		
+	void			*host_sg_tbl_ptr;
 	dma_addr_t		host_sg_tbl_addr;
-	int			sgi;				
+	int			sgi;
 
-	struct scsi_cmnd	*srb;		 		
+	struct scsi_cmnd	*srb;
 	struct sense_data_t 	sense_buffer[MAX_ALLOWED_LUN_CNT];
 
-	int			cur_clk;			
-		
+	int			cur_clk;
+
 	int 			cur_card;
-	
-	unsigned long 		need_release;			
-	unsigned long 		need_reset;			
+
+	unsigned long 		need_release;
+	unsigned long 		need_reset;
 	unsigned long 		need_reinit;
-	
+
 	int 			rw_need_retry;
 	int			rw_retry_cnt;
-	
+
 #ifdef SUPPORT_OCP
 	u32 			ocp_int;
 	u8 			ocp_stat;
 #endif
 
-	u8 			card_exist;		
-	u8 			card_ready;		
-	u8 			card_fail;		
-	u8 			card_ejected;		
-	u8 			card_wp;		
+	u8 			card_exist;
+	u8 			card_ready;
+	u8 			card_fail;
+	u8 			card_ejected;
+	u8 			card_wp;
 
-	u8 			lun_mc;			
+	u8 			lun_mc;
 
 #ifndef LED_AUTO_BLINK
 	int 			led_toggle_counter;
@@ -664,7 +664,7 @@ struct rtsx_chip {
 
 	int 			sd_reset_counter;
 	int 			ms_reset_counter;
-	
+
 	u8			card_bus_width[MAX_ALLOWED_LUN_CNT];
 	u32 			capacity[MAX_ALLOWED_LUN_CNT];
 	card_rw_func 		rw_card[MAX_ALLOWED_LUN_CNT];
@@ -672,13 +672,13 @@ struct rtsx_chip {
 	u8			lun2card[MAX_ALLOWED_LUN_CNT];
 
 	int 			rw_fail_cnt[MAX_ALLOWED_LUN_CNT];
-	
+
 	int 			sd_show_cnt;
 	int 			ms_show_cnt;
 
 	struct sd_info		sd_card;
 	struct ms_info		ms_card;
-	
+
 #ifdef _MSG_TRACE
 	struct trace_msg_t	trace_msg[TRACE_ITEM_CNT];
 	int 			msg_idx;
@@ -692,19 +692,19 @@ struct rtsx_chip {
 	u8			host_aspm_val;
 
 	u8 			rtsx_flag;
-	
+
 	int			sd20_mode;
 
 	int 			ss_counter;
 	int 			idle_counter;
 	enum RTSX_STAT 		rtsx_stat;
-	
+
 	u16 			vendor_id;
 	u16			product_id;
 	u16			ssvid;
 	u16			ssdid;
 	u8 			ic_version;
-	
+
 	int			driver_first_load;
 
 	u8 			aspm_level[2];
@@ -714,130 +714,130 @@ struct rtsx_chip {
 
 
 	int adma_mode;
-	
-	int auto_delink_en;		
-	int ss_en;			
-	u8 lun_mode;			
-	u8 aspm_l0s_l1_en;		
-	
-	int power_down_in_ss;		
-	
-	int sdr104_en;			
-	int ddr50_en;			
-	int sdr50_en;			
-	
-	int baro_pkg;			
 
-	int asic_code;			
-	int phy_debug_mode;		
-	int aux_pwr_exist;		
-	u8 ms_power_class_en;		
+	int auto_delink_en;
+	int ss_en;
+	u8 lun_mode;
+	u8 aspm_l0s_l1_en;
 
-	int mspro_formatter_enable;	
+	int power_down_in_ss;
 
-	int use_hw_setting;		
+	int sdr104_en;
+	int ddr50_en;
+	int sdr50_en;
 
-	int remote_wakeup_en;		
+	int baro_pkg;
 
-	int ss_idle_period;		
-	
-	int dynamic_aspm;		
-	int config_host_aspm;		
-	
-	int fpga_sd_sdr104_clk;		
-	int fpga_sd_ddr50_clk;		
-	int fpga_sd_sdr50_clk;		
-	int fpga_sd_hs_clk;		
-	int fpga_mmc_52m_clk;		
-	int fpga_ms_hg_clk;		
-	int fpga_ms_4bit_clk;		
-	int fpga_ms_1bit_clk;		
-	
-	int asic_sd_sdr104_clk;		
-	int asic_sd_ddr50_clk;		
-	int asic_sd_sdr50_clk;		
-	int asic_sd_hs_clk;		
-	int asic_mmc_52m_clk;		
-	int asic_ms_hg_clk;		
-	int asic_ms_4bit_clk;		
-	int asic_ms_1bit_clk;		
-	
-	u8 ssc_depth_sd_sdr104;		
-	u8 ssc_depth_sd_ddr50;		
-	u8 ssc_depth_sd_sdr50;		
-	u8 ssc_depth_sd_hs;		
-	u8 ssc_depth_mmc_52m;		
-	u8 ssc_depth_ms_hg;		
-	u8 ssc_depth_ms_4bit;		
-	u8 ssc_depth_low_speed;		
-	
-	u8 card_drive_sel;		
-	u8 sd30_drive_sel_1v8;		
-	u8 sd30_drive_sel_3v3;		
+	int asic_code;
+	int phy_debug_mode;
+	int aux_pwr_exist;
+	u8 ms_power_class_en;
 
-	u8 sd_400mA_ocp_thd;		
-	u8 sd_800mA_ocp_thd;		
-	
-	int ssc_en;			
-	
-	int msi_en;			
-	
-	int sd_timeout;			
-	int ms_timeout;			
-	int mspro_timeout;		
-	
-	int auto_power_down;		
-	
-	int sd_ddr_tx_phase;  
-	int mmc_ddr_tx_phase; 
-	int sd_default_tx_phase;	
-	int sd_default_rx_phase;	
-	
-	int pmos_pwr_on_interval;	
-	int sd_voltage_switch_delay;	
-	int s3_pwr_off_delay;		
-	
-	int force_clkreq_0;		
-	
-	int ft2_fast_mode;		
-	
+	int mspro_formatter_enable;
+
+	int use_hw_setting;
+
+	int remote_wakeup_en;
+
+	int ss_idle_period;
+
+	int dynamic_aspm;
+	int config_host_aspm;
+
+	int fpga_sd_sdr104_clk;
+	int fpga_sd_ddr50_clk;
+	int fpga_sd_sdr50_clk;
+	int fpga_sd_hs_clk;
+	int fpga_mmc_52m_clk;
+	int fpga_ms_hg_clk;
+	int fpga_ms_4bit_clk;
+	int fpga_ms_1bit_clk;
+
+	int asic_sd_sdr104_clk;
+	int asic_sd_ddr50_clk;
+	int asic_sd_sdr50_clk;
+	int asic_sd_hs_clk;
+	int asic_mmc_52m_clk;
+	int asic_ms_hg_clk;
+	int asic_ms_4bit_clk;
+	int asic_ms_1bit_clk;
+
+	u8 ssc_depth_sd_sdr104;
+	u8 ssc_depth_sd_ddr50;
+	u8 ssc_depth_sd_sdr50;
+	u8 ssc_depth_sd_hs;
+	u8 ssc_depth_mmc_52m;
+	u8 ssc_depth_ms_hg;
+	u8 ssc_depth_ms_4bit;
+	u8 ssc_depth_low_speed;
+
+	u8 card_drive_sel;
+	u8 sd30_drive_sel_1v8;
+	u8 sd30_drive_sel_3v3;
+
+	u8 sd_400mA_ocp_thd;
+	u8 sd_800mA_ocp_thd;
+
+	int ssc_en;
+
+	int msi_en;
+
+	int sd_timeout;
+	int ms_timeout;
+	int mspro_timeout;
+
+	int auto_power_down;
+
+	int sd_ddr_tx_phase;
+	int mmc_ddr_tx_phase;
+	int sd_default_tx_phase;
+	int sd_default_rx_phase;
+
+	int pmos_pwr_on_interval;
+	int sd_voltage_switch_delay;
+	int s3_pwr_off_delay;
+
+	int force_clkreq_0;
+
+	int ft2_fast_mode;
+
 	int do_delink_before_power_down;
-	
-	int polling_config;		
-	
-	int delink_stage1_step;		
-	int delink_stage2_step;		
-	int delink_stage3_step;		
-	
-	int auto_delink_in_L1;		
-	
-	int hp_watch_bios_hotplug;	
-	
-	int support_ms_8bit;		
-	int support_mmc;		
-	
-	u8 blink_led;			
-	u8 led_always_on;		
-	
-	u8 phy_voltage;			
-	
-	u32 sd_speed_prior;		
-	u32 sd_current_prior;		
-	
-	u32 sd_ctl;			
 
-	u32 relink_time;		
-	
-	int pre_read_en;		
-	
-	int pre_read_th;		
+	int polling_config;
 
-	
-	int ltr_en;			
+	int delink_stage1_step;
+	int delink_stage2_step;
+	int delink_stage3_step;
 
-	u16 phy_pcr;			
-	u16 phy_rcr0;			
-	u16 phy_rcr2;			
+	int auto_delink_in_L1;
+
+	int hp_watch_bios_hotplug;
+
+	int support_ms_8bit;
+	int support_mmc;
+
+	u8 blink_led;
+	u8 led_always_on;
+
+	u8 phy_voltage;
+
+	u32 sd_speed_prior;
+	u32 sd_current_prior;
+
+	u32 sd_ctl;
+
+	u32 relink_time;
+
+	int pre_read_en;
+
+	int pre_read_th;
+
+
+	int ltr_en;
+
+	u16 phy_pcr;
+	u16 phy_rcr0;
+	u16 phy_rcr2;
 };
 
 #define rtsx_get_stat(chip)		(chip)->rtsx_stat
@@ -940,5 +940,5 @@ static inline void rtsx_get_host_aspm(struct rtsx_chip *chip, u8 *val)
 	GetHostASPM(chip, val);
 }
 
-#endif  
+#endif
 
