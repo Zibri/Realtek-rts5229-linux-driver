@@ -1,6 +1,6 @@
 /* Driver for Realtek PCI-Express card reader
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -68,7 +68,7 @@ MODULE_PARM_DESC(msi_en, "enable msi");
 static irqreturn_t rtsx_interrupt(int irq, void *dev_id);
 
 /***********************************************************************
- * Host functions 
+ * Host functions
  ***********************************************************************/
 
 static const char* host_info(struct Scsi_Host *host)
@@ -129,26 +129,20 @@ static int slave_configure(struct scsi_device *sdev)
 #define SPRINTF(args...) \
 	do { if (pos < buffer+length) pos += sprintf(pos, ## args); } while (0)
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-static int queuecommand_lck(struct scsi_cmnd *srb,
-			void (*done)(struct scsi_cmnd *))
-{
-#else
 static int queuecommand_lck(struct scsi_cmnd *srb)
 {
 	void (*done)(struct scsi_cmnd *) = scsi_done;
-#endif
 	struct rtsx_dev *dev = host_to_rtsx(srb->device->host);
 	struct rtsx_chip *chip = dev->chip;
 
-	
+
 	if (chip->srb != NULL) {
 		printk(KERN_ERR "Error in %s: chip->srb = %p\n",
 			__FUNCTION__, chip->srb);
 		return SCSI_MLQUEUE_HOST_BUSY;
 	}
 
-	
+
 	if (rtsx_chk_stat(chip, RTSX_STAT_DISCONNECT)) {
 		printk(KERN_INFO "Fail command during disconnect\n");
 		srb->result = DID_NO_CONNECT << 16;
@@ -156,24 +150,13 @@ static int queuecommand_lck(struct scsi_cmnd *srb)
 		return 0;
 	}
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-	srb->scsi_done = done;
-#endif
 	chip->srb = srb;
 	complete(&dev->cmnd_ready);
 
 	return 0;
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 37)
-static int queuecommand(struct scsi_cmnd *srb,
-			void (*done)(struct scsi_cmnd *))
-{
-	return queuecommand_lck(srb, done);
-}
-#else
 static DEF_SCSI_QCMD(queuecommand)
-#endif
 
 /***********************************************************************
  * Error handling functions
@@ -185,23 +168,23 @@ static int command_abort(struct scsi_cmnd *srb)
 	struct Scsi_Host *host = srb->device->host;
 	struct rtsx_dev *dev = host_to_rtsx(host);
 	struct rtsx_chip *chip = dev->chip;
-	
+
 	printk(KERN_INFO "%s called\n", __FUNCTION__);
-	
+
 	scsi_lock(host);
-	
-	
+
+
 	if (chip->srb != srb) {
 		scsi_unlock(host);
 		printk(KERN_INFO "-- nothing to abort\n");
 		return FAILED;
 	}
-	
+
 	rtsx_set_stat(chip, RTSX_STAT_ABORT);
-	
+
 	scsi_unlock(host);
-	
-	
+
+
 	wait_for_completion(&dev->notify);
 
 	return SUCCESS;
@@ -224,7 +207,7 @@ static int bus_reset(struct scsi_cmnd *srb)
 	int result = 0;
 
 	printk(KERN_INFO "%s called\n", __FUNCTION__);
-	
+
 	return result < 0 ? FAILED : SUCCESS;
 }
 
@@ -234,51 +217,51 @@ static int bus_reset(struct scsi_cmnd *srb)
  */
 
 static struct scsi_host_template rtsx_host_template = {
-	
+
 	.name =				CR_DRIVER_NAME,
 	.proc_name =			CR_DRIVER_NAME,
 	//.proc_info =			proc_info,
 	.info =				host_info,
 
-	
+
 	.queuecommand =			queuecommand,
 
-	
+
 	.eh_abort_handler =		command_abort,
 	.eh_device_reset_handler =	device_reset,
 	.eh_bus_reset_handler =		bus_reset,
 
-	
+
 	.can_queue =			1,
 	.cmd_per_lun =			1,
 
-	
+
 	.this_id =			-1,
 
 	.slave_alloc =			slave_alloc,
 	.slave_configure =		slave_configure,
 
-	
+
 	.sg_tablesize =			SG_ALL,
 
-	
+
 	.max_sectors =                  240,
 
 	/* merge commands... this seems to help performance, but
 	 * periodically someone should test to see which setting is more
 	 * optimal.
 	 */
-	
+
 	// Commented due to it is removed since kernel 5.0
 	// .use_clustering =		1,
 
-	
+
 	.emulated =			1,
 
-	
+
 	.skip_settle_delay =		1,
 
-	
+
 	.module =			THIS_MODULE
 };
 
@@ -286,10 +269,10 @@ static struct scsi_host_template rtsx_host_template = {
 static int rtsx_acquire_irq(struct rtsx_dev *dev)
 {
 	struct rtsx_chip *chip = dev->chip;
-	
-	printk(KERN_INFO "%s: chip->msi_en = %d, pci->irq = %d\n", 
+
+	printk(KERN_INFO "%s: chip->msi_en = %d, pci->irq = %d\n",
 			__FUNCTION__, chip->msi_en, dev->pci->irq);
-	
+
 	if (request_irq(dev->pci->irq, rtsx_interrupt,
 			chip->msi_en ? 0 : IRQF_SHARED,
 			CR_DRIVER_NAME, dev)) {
@@ -297,10 +280,10 @@ static int rtsx_acquire_irq(struct rtsx_dev *dev)
 		       "disabling device\n", dev->pci->irq);
 		return -1;
 	}
-	
+
 	dev->irq = dev->pci->irq;
 	pci_intx(dev->pci, !chip->msi_en);
-	
+
 	return 0;
 }
 
@@ -310,17 +293,17 @@ int rtsx_read_pci_cfg_byte(u8 bus, u8 dev, u8 func, u8 offset, u8 *val)
 	struct pci_dev *pdev;
 	u8 data;
 	u8 devfn = (dev << 3) | func;
-	
+
 	pdev = pci_get_bus_and_slot(bus, devfn);
 	if (!dev) {
 		return -1;
 	}
-	
+
 	pci_read_config_byte(pdev, offset, &data);
 	if (val) {
 		*val = data;
 	}
-	
+
 	return 0;
 }
 
@@ -339,20 +322,20 @@ static int rtsx_suspend(struct pci_dev *pci, pm_message_t state)
 		printk(KERN_ERR "Invalid memory\n");
 		return 0;
 	}
-	
-	
+
+
 	mutex_lock(&(dev->dev_mutex));
 
 	chip = dev->chip;
-	
+
 	rtsx_do_before_power_down(chip, PM_S3);
-	
+
 	if (dev->irq >= 0) {
 		synchronize_irq(dev->irq);
 		free_irq(dev->irq, (void *)dev);
 		dev->irq = -1;
 	}
-	
+
 	if (chip->msi_en) {
 		pci_disable_msi(pci);
 	}
@@ -362,9 +345,9 @@ static int rtsx_suspend(struct pci_dev *pci, pm_message_t state)
 	pci_disable_device(pci);
 	pci_set_power_state(pci, pci_choose_state(pci, state));
 
-	
+
 	mutex_unlock(&dev->dev_mutex);
-	
+
 	return 0;
 }
 
@@ -381,8 +364,8 @@ static int rtsx_resume(struct pci_dev *pci)
 	}
 
 	chip = dev->chip;
-	
-	
+
+
 	mutex_lock(&(dev->dev_mutex));
 
 	pci_set_power_state(pci, PCI_D0);
@@ -390,20 +373,20 @@ static int rtsx_resume(struct pci_dev *pci)
 	if (pci_enable_device(pci) < 0) {
 		printk(KERN_ERR "%s: pci_enable_device failed, "
 		       "disabling device\n", CR_DRIVER_NAME);
-		
+
 		mutex_unlock(&dev->dev_mutex);
 		return -EIO;
 	}
 	pci_set_master(pci);
-	
+
 	if (chip->msi_en) {
 		if (pci_enable_msi(pci) < 0) {
 			chip->msi_en = 0;
 		}
 	}
-	
+
 	if (rtsx_acquire_irq(dev) < 0) {
-		
+
 		mutex_unlock(&dev->dev_mutex);
 		return -EIO;
 	}
@@ -411,12 +394,12 @@ static int rtsx_resume(struct pci_dev *pci)
 	rtsx_write_register(chip, HOST_SLEEP_STATE, 0x03, 0x00);
 	rtsx_init_chip(chip);
 
-	
+
 	mutex_unlock(&dev->dev_mutex);
 
 	return 0;
 }
-#endif 
+#endif
 
 static void rtsx_shutdown(struct pci_dev *pci)
 {
@@ -439,7 +422,7 @@ static void rtsx_shutdown(struct pci_dev *pci)
 		free_irq(dev->irq, (void *)dev);
 		dev->irq = -1;
 	}
-	
+
 	if (chip->msi_en) {
 		pci_disable_msi(pci);
 	}
@@ -461,20 +444,20 @@ static int rtsx_control_thread(void * __dev)
 		if (wait_for_completion_interruptible(&dev->cmnd_ready))
 			break;
 
-		
+
 		mutex_lock(&(dev->dev_mutex));
 
-		
+
 		if (rtsx_chk_stat(chip, RTSX_STAT_DISCONNECT)) {
 			printk(KERN_INFO "-- rts5229-control exiting\n");
 			mutex_unlock(&dev->dev_mutex);
 			break;
 		}
 
-		
+
 		scsi_lock(host);
 
-		
+
 		if (rtsx_chk_stat(chip, RTSX_STAT_ABORT)) {
 			chip->srb->result = DID_ABORT << 16;
 			goto SkipForAbort;
@@ -482,7 +465,7 @@ static int rtsx_control_thread(void * __dev)
 
 		scsi_unlock(host);
 
-		/* reject the command if the direction indicator 
+		/* reject the command if the direction indicator
 		 * is UNKNOWN
 		 */
 		if (chip->srb->sc_data_direction == DMA_BIDIRECTIONAL) {
@@ -505,46 +488,42 @@ static int rtsx_control_thread(void * __dev)
 			chip->srb->result = DID_BAD_TARGET << 16;
 		}
 
-		
+
 		else {
 			RTSX_DEBUG(scsi_show_command(chip->srb));
 			rtsx_invoke_transport(chip->srb, chip);
 		}
 
-		
+
 		scsi_lock(host);
 
-		
-		if (!chip->srb)
-			;		
 
-		
+		if (!chip->srb)
+			;
+
+
 		else if (chip->srb->result != DID_ABORT << 16) {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-			chip->srb->scsi_done(chip->srb);
-#else
 			scsi_done(chip->srb);
-#endif
 		} else {
 SkipForAbort:
 			printk(KERN_ERR "scsi command aborted\n");
 		}
-		
+
 		if (rtsx_chk_stat(chip, RTSX_STAT_ABORT)) {
 			complete(&(dev->notify));
-			
+
 			rtsx_set_stat(chip, RTSX_STAT_IDLE);
 		}
 
-		
+
 		chip->srb = NULL;
 		scsi_unlock(host);
 
-		
-		mutex_unlock(&dev->dev_mutex);
-	} 
 
-	/* notify the exit routine that we're actually exiting now 
+		mutex_unlock(&dev->dev_mutex);
+	}
+
+	/* notify the exit routine that we're actually exiting now
 	 *
 	 * complete()/wait_for_completion() is similar to up()/down(),
 	 * except that complete() is safe in the case where the structure
@@ -552,13 +531,13 @@ SkipForAbort:
 	 * after the down() -- that's necessary for the thread-shutdown
 	 * case.
 	 *
-	 * complete_and_exit() goes even further than this -- it is safe in
+	 * kthread_complete_and_exit() goes even further than this -- it is safe in
 	 * the case that the thread of the caller is going away (not just
 	 * the structure) -- this is necessary for the module-remove case.
 	 * This is important in preemption kernels, which transfer the flow
 	 * of execution immediately upon a complete().
 	 */
-	complete_and_exit(&dev->control_exit, 0);
+	kthread_complete_and_exit(&dev->control_exit, 0);
 }
 
 
@@ -568,7 +547,7 @@ static int rtsx_polling_thread(void * __dev)
 	struct rtsx_chip *chip = dev->chip;
 	struct sd_info *sd_card = &(chip->sd_card);
 	struct ms_info *ms_card = &(chip->ms_card);
-	
+
 	sd_card->cleanup_counter = 0;
 	ms_card->cleanup_counter = 0;
 
@@ -577,30 +556,30 @@ static int rtsx_polling_thread(void * __dev)
 	for(;;) {
 		wait_timeout(POLLING_INTERVAL);
 
-		
+
 		mutex_lock(&(dev->dev_mutex));
 
-		
+
 		if (rtsx_chk_stat(chip, RTSX_STAT_DISCONNECT)) {
 			printk(KERN_INFO "-- rtsx-polling exiting\n");
 			mutex_unlock(&dev->dev_mutex);
 			break;
 		}
-		
-		mutex_unlock(&dev->dev_mutex);		
+
+		mutex_unlock(&dev->dev_mutex);
 
 		mspro_polling_format_status(chip);
-		
-		
+
+
 		mutex_lock(&(dev->dev_mutex));
 
 		rtsx_polling_func(chip);
 
-		
+
 		mutex_unlock(&dev->dev_mutex);
 	}
 
-	complete_and_exit(&dev->polling_exit, 0);
+	kthread_complete_and_exit(&dev->polling_exit, 0);
 }
 
 /*
@@ -636,7 +615,7 @@ static irqreturn_t rtsx_interrupt(int irq, void *dev_id)
 	}
 
 	status = chip->int_reg;
-	
+
 	if (dev->check_card_cd) {
 		if (!(dev->check_card_cd & status)) {
 			dev->trans_result = TRANS_RESULT_FAIL;
@@ -679,7 +658,7 @@ Exit:
 static void rtsx_release_resources(struct rtsx_dev *dev)
 {
 	printk(KERN_INFO "-- %s\n", __FUNCTION__);
-	
+
 	/* Tell the control thread to exit.  The SCSI host must
 	 * already have been removed so it won't try to queue
 	 * any more commands.
@@ -694,7 +673,7 @@ static void rtsx_release_resources(struct rtsx_dev *dev)
 	wait_timeout(200);
 
 	if (dev->rtsx_resv_buf) {
-		dma_free_coherent(&(dev->pci->dev), RTSX_RESV_BUF_LEN, 
+		dma_free_coherent(&(dev->pci->dev), RTSX_RESV_BUF_LEN,
 				dev->rtsx_resv_buf, dev->rtsx_resv_buf_addr);
 		dev->chip->host_cmds_ptr = NULL;
 		dev->chip->host_sg_tbl_ptr = NULL;
@@ -709,7 +688,7 @@ static void rtsx_release_resources(struct rtsx_dev *dev)
 
 	pci_disable_device(dev->pci);
 	pci_release_regions(dev->pci);
-	
+
 	rtsx_release_chip(dev->chip);
 	kfree(dev->chip);
 }
@@ -731,7 +710,7 @@ static void quiesce_and_remove_host(struct rtsx_dev *dev)
 	wake_up(&dev->delay_wait);
 	wait_for_completion(&dev->scanning_done);
 
-	
+
 	wait_timeout(100);
 
 	/* queuecommand won't accept any new commands and the control
@@ -741,17 +720,13 @@ static void quiesce_and_remove_host(struct rtsx_dev *dev)
 	if (chip->srb) {
 		chip->srb->result = DID_NO_CONNECT << 16;
 		scsi_lock(host);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-		chip->srb->scsi_done(dev->chip->srb);
-#else
 		scsi_done(dev->chip->srb);
-#endif
 		chip->srb = NULL;
 		scsi_unlock(host);
 	}
 	mutex_unlock(&dev->dev_mutex);
 
-	
+
 	scsi_remove_host(host);
 }
 
@@ -771,7 +746,7 @@ static int rtsx_scan_thread(void * __dev)
 	struct rtsx_dev *dev = (struct rtsx_dev *)__dev;
 	struct rtsx_chip *chip = dev->chip;
 
-	
+
 	if (delay_use > 0) {
 		printk(KERN_INFO "%s: waiting for device "
 				"to settle before scanning\n", CR_DRIVER_NAME);
@@ -780,15 +755,15 @@ static int rtsx_scan_thread(void * __dev)
 				delay_use * HZ);
 	}
 
-	
+
 	if (!rtsx_chk_stat(chip, RTSX_STAT_DISCONNECT)) {
 		scsi_scan_host(rtsx_to_host(dev));
 		printk(KERN_INFO "%s: device scan complete\n", CR_DRIVER_NAME);
 
-		
+
 	}
 
-	complete_and_exit(&dev->scanning_done, 0);
+	kthread_complete_and_exit(&dev->scanning_done, 0);
 }
 
 static void rtsx_init_options(struct rtsx_chip *chip)
@@ -847,43 +822,43 @@ static void rtsx_init_options(struct rtsx_chip *chip)
 	chip->sd_voltage_switch_delay = 1000;
 	chip->ms_power_class_en = 3;
 
-	chip->sd_400mA_ocp_thd = 1;	
-	chip->sd_800mA_ocp_thd = 5;	
-	
+	chip->sd_400mA_ocp_thd = 1;
+	chip->sd_800mA_ocp_thd = 5;
+
 	chip->card_drive_sel = 0x55;
 	chip->sd30_drive_sel_1v8 = 0x03;
 	chip->sd30_drive_sel_3v3 = 0x01;
-	
+
 	chip->do_delink_before_power_down = 1;
 	chip->auto_power_down = 1;
 	chip->polling_config = 0;
-	
+
 	chip->force_clkreq_0 = 1;
 	chip->ft2_fast_mode = 0;
-	
+
 	chip->sd_timeout = 10000;
 	chip->ms_timeout = 2000;
 	chip->mspro_timeout = 15000;
-	
+
 	chip->power_down_in_ss = 1;
-	
+
 	chip->sdr104_en = 1;
 	chip->sdr50_en = 1;
 	chip->ddr50_en = 1;
-	
+
 	chip->delink_stage1_step = 100;
 	chip->delink_stage2_step = 40;
 	chip->delink_stage3_step = 20;
-	
+
 	chip->auto_delink_in_L1 = 1;
 	chip->blink_led = 1;
 	chip->msi_en = msi_en;
 	chip->hp_watch_bios_hotplug = 0;
 	chip->phy_voltage = 0xFF;
-	
+
 	chip->support_ms_8bit = 1;
 	chip->s3_pwr_off_delay = 1000;
-	
+
 	chip->pre_read_th = PRE_READ_30M;
 	chip->relink_time = 0x08FFFF;
 
@@ -959,10 +934,10 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 		goto errout;
 	}
 
-	printk(KERN_INFO "Original address: 0x%lx, remapped address: 0x%lx\n", 
+	printk(KERN_INFO "Original address: 0x%lx, remapped address: 0x%lx\n",
 			(unsigned long)(dev->addr), (unsigned long)(dev->remap_addr));
 
-	dev->rtsx_resv_buf = dma_alloc_coherent(&(pci->dev), RTSX_RESV_BUF_LEN, 
+	dev->rtsx_resv_buf = dma_alloc_coherent(&(pci->dev), RTSX_RESV_BUF_LEN,
 			&(dev->rtsx_resv_buf_addr), GFP_KERNEL);
 	if (dev->rtsx_resv_buf == NULL) {
 		printk(KERN_ERR "alloc dma buffer fail\n");
@@ -975,17 +950,17 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 	dev->chip->host_sg_tbl_addr = dev->rtsx_resv_buf_addr + HOST_CMDS_BUF_LEN;
 
 	dev->chip->rtsx = dev;
-	
+
 	rtsx_init_options(dev->chip);
 
 	printk(KERN_INFO "pci->irq = %d\n", pci->irq);
-	
+
 	if (dev->chip->msi_en) {
 		if (pci_enable_msi(pci) < 0) {
 			dev->chip->msi_en = 0;
 		}
 	}
-	
+
 	if (rtsx_acquire_irq(dev) < 0) {
 		err = -EBUSY;
 		goto errout;
@@ -999,14 +974,14 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 		printk(KERN_ERR "rtsx_init_chip fail\n");
 		goto errout;
 	}
-	
+
 	err = scsi_add_host(host, &pci->dev);
 	if (err) {
 		printk(KERN_ERR "Unable to add the scsi host\n");
 		goto errout;
 	}
 
-	
+
 	th = kthread_run(rtsx_control_thread, dev, CR_DRIVER_NAME);
 	if (IS_ERR(th)) {
 		printk(KERN_ERR "Unable to start control thread\n");
@@ -1015,7 +990,7 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 	}
 	dev->ctl_thread = th;
 
-	
+
 	th = kthread_create(rtsx_scan_thread, dev, "rts5229-scan");
 	if (IS_ERR(th)) {
 		printk(KERN_ERR "Unable to start the device-scanning thread\n");
@@ -1027,7 +1002,7 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 
 	wake_up_process(th);
 
-	
+
 	th = kthread_run(rtsx_polling_thread, dev, "rts5229-polling");
 	if (IS_ERR(th)) {
 		printk(KERN_ERR "Unable to start the device-polling thread\n");
@@ -1041,7 +1016,7 @@ static int  rtsx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
 
 	return 0;
 
-	
+
 errout:
 	printk(KERN_ERR "rtsx_probe() failed\n");
 	release_everything(dev);
@@ -1087,7 +1062,7 @@ static struct pci_driver driver = {
 static int __init rts5229_init(void)
 {
 	printk(KERN_INFO "Initializing Realtek PCIE storage driver...\n");
-	
+
 	return pci_register_driver(&driver);
 }
 

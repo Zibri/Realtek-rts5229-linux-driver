@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -77,18 +77,18 @@
 #define SD_HW_RST		0xD6
 
 #ifdef SUPPORT_MAGIC_GATE
-#define CMD_MSPRO_MG_RKEY	0xA4   
-#define CMD_MSPRO_MG_SKEY	0xA3   
+#define CMD_MSPRO_MG_RKEY	0xA4
+#define CMD_MSPRO_MG_SKEY	0xA3
 
-#define KC_MG_R_PRO		0xBE   
+#define KC_MG_R_PRO		0xBE
 
-#define KF_SET_LEAF_ID		0x31   
-#define KF_GET_LOC_EKB		0x32   
-#define KF_CHG_HOST		0x33   
-#define KF_RSP_CHG		0x34   
-#define KF_RSP_HOST		0x35   
-#define KF_GET_ICV		0x36   
-#define KF_SET_ICV		0x37   
+#define KF_SET_LEAF_ID		0x31
+#define KF_GET_LOC_EKB		0x32
+#define KF_CHG_HOST		0x33
+#define KF_RSP_CHG		0x34
+#define KF_RSP_HOST		0x35
+#define KF_GET_ICV		0x36
+#define KF_SET_ICV		0x37
 #endif
 
 #define	SENSE_TYPE_NO_SENSE				0
@@ -109,7 +109,7 @@
 #define SENSE_TYPE_MG_WRITE_ERR				0x0e
 #endif
 #ifdef SUPPORT_SD_LOCK
-#define SENSE_TYPE_MEDIA_READ_FORBIDDEN			0x10  
+#define SENSE_TYPE_MEDIA_READ_FORBIDDEN			0x10
 #endif
 
 #define	PIO_MODE_0			0x01
@@ -145,7 +145,7 @@
 #endif
 
 
-#define PP_AUTO_DELINK_EN_DEF		0x10  
+#define PP_AUTO_DELINK_EN_DEF		0x10
 
 
 #define PP_VBUS_TOO_LOW			0x02
@@ -157,14 +157,14 @@
 
 #define PP_FLASH_CODE			0x40
 #define PP_CODE_MODE_FUNC		0x40
-#define PP_FLASH_OP_VER2		0x02  
+#define PP_FLASH_OP_VER2		0x02
 #define	PP_USB_SPEED_FUNCTION_SUPPORT	0x08
 
 
 
-#define PP_SD_LOCK_FUNC			0x01  
-#define PP_SD_LOCK_SUPPORT		0x80  
-#define PP_SD_ERASING			0x01  
+#define PP_SD_LOCK_FUNC			0x01
+#define PP_SD_LOCK_SUPPORT		0x80
+#define PP_SD_ERASING			0x01
 #define PP_SD_LOCKED			0x02
 #define PP_SD_PWD_EXIST			0x04
 
@@ -187,9 +187,9 @@
 
 void scsi_show_command(struct scsi_cmnd *srb);
 void set_sense_type(struct rtsx_chip *chip, unsigned int lun, int sense_type);
-void set_sense_data(struct rtsx_chip *chip, unsigned int lun, u8 err_code, u8 sense_key, 
+void set_sense_data(struct rtsx_chip *chip, unsigned int lun, u8 err_code, u8 sense_key,
 		u32 info, u8 asc, u8 ascq, u8 sns_key_info0, u16 sns_key_info1);
 int rtsx_scsi_handler(struct scsi_cmnd *srb, struct rtsx_chip *chip);
 
-#endif   
+#endif
 

@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -56,32 +56,8 @@
 
 #define CR_DRIVER_NAME		"rts5229"
 
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 14)
-#ifdef CONFIG_PCI
-#undef pci_intx
-#define pci_intx(pci,x)
-#endif
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 24)
-#define sg_page(sg)	(sg)->page
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 25)
-#define scsi_set_resid(srb, residue)	((srb)->resid = (residue))
-#define scsi_get_resid(srb)		((srb)->resid)
-
-static inline unsigned scsi_bufflen(struct scsi_cmnd *cmd)
-{
-	return cmd->request_bufflen;
-}
-#endif
-
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 32)
 #define pci_get_bus_and_slot(bus, devfn)	\
 	pci_get_domain_bus_and_slot(0, (bus), (devfn))
-#endif
 
 /*
  * macros for easy use
@@ -139,28 +115,28 @@ struct rtsx_chip;
 struct rtsx_dev {
 	struct pci_dev 		*pci;
 
-	
+
 	unsigned long 		addr;
 	void __iomem 		*remap_addr;
 	int 			irq;
 
-	
+
 	spinlock_t 		reg_lock;
-	
-	struct task_struct	*ctl_thread;	 
-	struct task_struct	*polling_thread; 
 
-	
-	struct completion	cmnd_ready;	 
-	struct completion	control_exit;	 
-	struct completion	polling_exit;	 
-	struct completion	notify;		 
-	struct completion	scanning_done;	 
+	struct task_struct	*ctl_thread;
+	struct task_struct	*polling_thread;
 
-	wait_queue_head_t	delay_wait;	 
+
+	struct completion	cmnd_ready;
+	struct completion	control_exit;
+	struct completion	polling_exit;
+	struct completion	notify;
+	struct completion	scanning_done;
+
+	wait_queue_head_t	delay_wait;
 	struct mutex		dev_mutex;
 
-	
+
 	void 			*rtsx_resv_buf;
 	dma_addr_t 		rtsx_resv_buf_addr;
 
@@ -168,7 +144,7 @@ struct rtsx_dev {
 	char			trans_state;
 
 	struct completion 	*done;
-	
+
 	u32 			check_card_cd;
 
 	struct rtsx_chip 	*chip;
@@ -186,38 +162,13 @@ static inline struct rtsx_dev *host_to_rtsx(struct Scsi_Host *host) {
 
 static inline void get_current_time(u8 *timeval_buf, int buf_len)
 {
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
-
-	/*
-	struct timeval {
-	   __kernel_time_t		tv_sec;		// seconds 
-	   __kernel_suseconds_t	tv_usec;	// microseconds
-        };
-	*/
-
-	struct timeval tv;
-#else
 	ktime_t tv;
     	u16 tv_usec;
-#endif
 
 	if (!timeval_buf || (buf_len < 8)) {
 		return;
 	}
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,0,0)
-	do_gettimeofday(&tv);
-
-	timeval_buf[0] = (u8)(tv.tv_sec >> 24);
-	timeval_buf[1] = (u8)(tv.tv_sec >> 16);
-	timeval_buf[2] = (u8)(tv.tv_sec >> 8);
-	timeval_buf[3] = (u8)(tv.tv_sec);
-	timeval_buf[4] = (u8)(tv.tv_usec >> 24);
-	timeval_buf[5] = (u8)(tv.tv_usec >> 16);
-	timeval_buf[6] = (u8)(tv.tv_usec >> 8);
-	timeval_buf[7] = (u8)(tv.tv_usec);
-#else
 	tv = ktime_get_real();   // equals to tv.tv_sec
 	tv_usec = ktime_to_us(tv);   // equals to tv.tv_usec
 	timeval_buf[0] = (u8)(tv >> 24);
@@ -228,7 +179,6 @@ static inline void get_current_time(u8 *timeval_buf, int buf_len)
 	timeval_buf[5] = (u8)(tv_usec >> 16);
 	timeval_buf[6] = (u8)(tv_usec >> 8);
 	timeval_buf[7] = (u8)(tv_usec);
-#endif
 }
 
 /* The scsi_lock() and scsi_unlock() macros protect the sm_state and the
@@ -260,5 +210,5 @@ static inline void GetHostASPM(struct rtsx_chip *chip, u8 *val)
 
 int rtsx_read_pci_cfg_byte(u8 bus, u8 dev, u8 func, u8 offset, u8 *val);
 
-#endif  
+#endif
 

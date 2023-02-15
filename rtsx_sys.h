@@ -1,7 +1,7 @@
 /* Driver for Realtek PCI-Express card reader
  * Header file
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -54,5 +54,5 @@ static inline void notify_refresh_driver(struct rtsx_chip *chip)
 
 #define RTSX_MSG_IN_INT(x)
 
-#endif  
+#endif
 

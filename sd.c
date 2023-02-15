@@ -1,6 +1,6 @@
 /* Driver for Realtek PCI-Express card reader
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -45,7 +45,7 @@ static inline void sd_clr_err_code(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 
-	sd_card->err_code = 0;	
+	sd_card->err_code = 0;
 }
 
 static inline int sd_check_err_code(struct rtsx_chip *chip, u8 err_code)
@@ -58,18 +58,18 @@ static inline int sd_check_err_code(struct rtsx_chip *chip, u8 err_code)
 static int sd_check_data0_status(struct rtsx_chip *chip)
 {
 	u8 stat;
-	
+
 	RTSX_READ_REG(chip, SD_BUS_STAT, &stat);
 
 	if (!(stat & SD_DAT0_STATUS)) {
 		sd_set_err_code(chip, SD_BUSY);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
-static int sd_send_cmd_get_rsp(struct rtsx_chip *chip, u8 cmd_idx, 
+static int sd_send_cmd_get_rsp(struct rtsx_chip *chip, u8 cmd_idx,
 		u32 arg, u8 rsp_type, u8 *rsp, int rsp_len)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
@@ -99,11 +99,11 @@ RTY_SEND_CMD:
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD4, 0xFF, (u8)arg);
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, rsp_type);
-	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE, 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE,
 			0x01, PINGPONG_BUFFER);
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER,
 			0xFF, SD_TM_CMD_RSP | SD_TRANSFER_START);
-	rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, 
+	rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER,
 		     SD_TRANSFER_END | SD_STAT_IDLE, SD_TRANSFER_END | SD_STAT_IDLE);
 
 	if (rsp_type == SD_RSP_TYPE_R2) {
@@ -116,7 +116,7 @@ RTY_SEND_CMD:
 			rtsx_add_cmd(chip, READ_REG_CMD, reg_addr, 0, 0);
 		}
 		stat_idx = 5;
-	} 
+	}
 
 	rtsx_add_cmd(chip, READ_REG_CMD, SD_STAT1, 0, 0);
 
@@ -125,20 +125,20 @@ RTY_SEND_CMD:
 		u8 val;
 
 		rtsx_read_register(chip, SD_STAT1, &val);
-		RTSX_DEBUGP(("SD_STAT1: 0x%x\n", val));	
-		
+		RTSX_DEBUGP(("SD_STAT1: 0x%x\n", val));
+
 		rtsx_read_register(chip, SD_STAT2, &val);
 		RTSX_DEBUGP(("SD_STAT2: 0x%x\n", val));
-		
+
 		if (val & SD_RSP_80CLK_TIMEOUT) {
 			rtsx_clear_sd_error(chip);
 			sd_set_err_code(chip, SD_RSP_TIMEOUT);
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		rtsx_read_register(chip, SD_BUS_STAT, &val);
 		RTSX_DEBUGP(("SD_BUS_STAT: 0x%x\n", val));
-		
+
 		if (retval == -ETIMEDOUT) {
 			if (rsp_type & SD_WAIT_BUSY_END) {
 				retval = sd_check_data0_status(chip);
@@ -162,7 +162,7 @@ RTY_SEND_CMD:
 		return STATUS_SUCCESS;
 	}
 
-	ptr = rtsx_get_cmd_data(chip) + 1;  
+	ptr = rtsx_get_cmd_data(chip) + 1;
 
 	if ((ptr[0] & 0xC0) != 0) {
 		sd_set_err_code(chip, SD_STS_ERR);
@@ -194,9 +194,9 @@ RTY_SEND_CMD:
 				}
 			}
 #ifdef SUPPORT_SD_LOCK
-			if (ptr[1] & 0x7D) 
+			if (ptr[1] & 0x7D)
 #else
-			if (ptr[1] & 0x7F) 
+			if (ptr[1] & 0x7F)
 #endif
 			{
 				RTSX_DEBUGP(("ptr[1]: 0x%02x\n", ptr[1]));
@@ -208,9 +208,9 @@ RTY_SEND_CMD:
 			}
 			if (ptr[3] & 0x80) {
 				RTSX_DEBUGP(("ptr[3]: 0x%02x\n", ptr[3]));
-				TRACE_RET(chip, STATUS_FAIL);		
+				TRACE_RET(chip, STATUS_FAIL);
 			}
-			if (ptr[3] & 0x01) { 
+			if (ptr[3] & 0x01) {
 				sd_card->sd_data_buf_ready = 1;
 			} else {
 				sd_card->sd_data_buf_ready = 0;
@@ -231,11 +231,11 @@ static inline void sd_print_debug_reg(struct rtsx_chip *chip)
 	u8 val;
 
 	rtsx_read_register(chip, SD_STAT1, &val);
-	RTSX_DEBUGP(("SD_STAT1: 0x%x\n", val));	
-	
+	RTSX_DEBUGP(("SD_STAT1: 0x%x\n", val));
+
 	rtsx_read_register(chip, SD_STAT2, &val);
 	RTSX_DEBUGP(("SD_STAT2: 0x%x\n", val));
-	
+
 	rtsx_read_register(chip, SD_BUS_STAT, &val);
 	RTSX_DEBUGP(("SD_BUS_STAT: 0x%x\n", val));
 
@@ -257,27 +257,27 @@ static inline void sd_print_debug_reg(struct rtsx_chip *chip)
 	RTSX_DEBUGP(("SD_BLOCK_CNT_L: 0x%02x\n", val));
 	rtsx_read_register(chip, SD_BLOCK_CNT_H, &val);
 	RTSX_DEBUGP(("SD_BLOCK_CNT_H: 0x%02x\n", val));
-		
+
 #endif
 }
 
-static int sd_read_data(struct rtsx_chip *chip, u8 trans_mode, u8 *cmd, int cmd_len, 
+static int sd_read_data(struct rtsx_chip *chip, u8 trans_mode, u8 *cmd, int cmd_len,
 		u16 byte_cnt, u16 blk_cnt, u8 bus_width, u8 *buf, int buf_len, int timeout)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
 	int i;
-	
+
 	sd_clr_err_code(chip);
 
 	if (!buf) {
 		buf_len = 0;
 	}
-	
+
 	if (buf_len && (buf_len > PPBUF_LEN)) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	rtsx_init_cmd(chip);
 
 	if (cmd_len) {
@@ -293,8 +293,8 @@ static int sd_read_data(struct rtsx_chip *chip, u8 trans_mode, u8 *cmd, int cmd_
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG1, 0x03, bus_width);
 
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, 
-			SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF,
+			SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 			SD_CHECK_CRC7 | SD_RSP_LEN_6);
 	if (trans_mode != SD_TM_AUTO_TUNING) {
 		rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE, 0x01, PINGPONG_BUFFER);
@@ -305,7 +305,7 @@ static int sd_read_data(struct rtsx_chip *chip, u8 trans_mode, u8 *cmd, int cmd_
 	retval = rtsx_send_cmd(chip, SD_CARD, timeout);
 	if (retval < 0) {
 		sd_print_debug_reg(chip);
-		
+
 		if (retval == -ETIMEDOUT) {
 			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		}
@@ -319,12 +319,12 @@ static int sd_read_data(struct rtsx_chip *chip, u8 trans_mode, u8 *cmd, int cmd_
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
-static int sd_write_data(struct rtsx_chip *chip, u8 trans_mode, 
-		u8 *cmd, int cmd_len, u16 byte_cnt, u16 blk_cnt, u8 bus_width, 
+static int sd_write_data(struct rtsx_chip *chip, u8 trans_mode,
+		u8 *cmd, int cmd_len, u16 byte_cnt, u16 blk_cnt, u8 bus_width,
 		u8 *buf, int buf_len, int timeout)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
@@ -336,11 +336,11 @@ static int sd_write_data(struct rtsx_chip *chip, u8 trans_mode,
 	if (!buf) {
 		buf_len = 0;
 	}
-	
+
 	if (buf_len > PPBUF_LEN) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (buf && buf_len) {
 		retval = rtsx_write_ppbuf(chip, buf, buf_len);
 		if (retval != STATUS_SUCCESS) {
@@ -349,7 +349,7 @@ static int sd_write_data(struct rtsx_chip *chip, u8 trans_mode,
 	}
 
 	rtsx_init_cmd(chip);
-	
+
 	if (cmd_len) {
 		RTSX_DEBUGP(("SD/MMC CMD %d\n", cmd[0] - 0x40));
 		for (i = 0; i < (cmd_len < 6 ? cmd_len : 6); i++) {
@@ -363,21 +363,21 @@ static int sd_write_data(struct rtsx_chip *chip, u8 trans_mode,
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG1, 0x03, bus_width);
 
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, 
-		SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF,
+		SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 		SD_CHECK_CRC7 | SD_RSP_LEN_6);
-		
+
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, trans_mode | SD_TRANSFER_START);
 	rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
 
 	retval = rtsx_send_cmd(chip, SD_CARD, timeout);
 	if (retval < 0) {
 		sd_print_debug_reg(chip);
-		
+
 		if (retval == -ETIMEDOUT) {
 			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		}
-		
+
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
@@ -409,7 +409,7 @@ static int sd_check_csd(struct rtsx_chip *chip, char check_wp)
 	}
 
 	memcpy(sd_card->raw_csd, rsp + 1, 15);
-	
+
 	RTSX_READ_REG(chip, SD_CMD5, sd_card->raw_csd + 15);
 
 	RTSX_DEBUGP(("CSD Response:\n"));
@@ -419,32 +419,32 @@ static int sd_check_csd(struct rtsx_chip *chip, char check_wp)
 	RTSX_DEBUGP(("csd_ver = %d\n", csd_ver));
 
 	trans_speed = rsp[4];
-	if ((trans_speed & 0x07) == 0x02) {	
-		if ((trans_speed & 0xf8) >= 0x30) { 		
+	if ((trans_speed & 0x07) == 0x02) {
+		if ((trans_speed & 0xf8) >= 0x30) {
 			if (chip->asic_code) {
 				sd_card->sd_clock = 47;
 			} else {
 				sd_card->sd_clock = CLK_50;
 			}
-		} else if ((trans_speed & 0xf8) == 0x28) {	
+		} else if ((trans_speed & 0xf8) == 0x28) {
 			if (chip->asic_code) {
 				sd_card->sd_clock = 39;
 			} else {
 				sd_card->sd_clock = CLK_40;
 			}
-		} else if ((trans_speed & 0xf8) == 0x20) {	
+		} else if ((trans_speed & 0xf8) == 0x20) {
 			if (chip->asic_code) {
 				sd_card->sd_clock = 29;
 			} else {
 				sd_card->sd_clock = CLK_30;
 			}
-		} else if ((trans_speed & 0xf8) >= 0x10) {	
+		} else if ((trans_speed & 0xf8) >= 0x10) {
 			if (chip->asic_code) {
 				sd_card->sd_clock = 23;
 			} else {
 				sd_card->sd_clock = CLK_20;
 			}
-		} else if ((trans_speed & 0x08) >= 0x08) {	
+		} else if ((trans_speed & 0x08) >= 0x08) {
 			if (chip->asic_code) {
 				sd_card->sd_clock = 19;
 			} else {
@@ -472,7 +472,7 @@ static int sd_check_csd(struct rtsx_chip *chip, char check_wp)
 			sd_card->capacity = (((u32)(c_size + 1)) * (1 << (c_size_mult + 2))) << (blk_size - 9);
 		} else {
 			u32 total_sector = 0;
-			total_sector = (((u32)rsp[8] & 0x3f) << 16) | 
+			total_sector = (((u32)rsp[8] & 0x3f) << 16) |
 				((u32)rsp[9] << 8) | (u32)rsp[10];
 			sd_card->capacity = (total_sector + 1) << 10;
 		}
@@ -480,7 +480,7 @@ static int sd_check_csd(struct rtsx_chip *chip, char check_wp)
 
 	if (check_wp) {
 		if (rsp[15] & 0x30) {
-			chip->card_wp |= SD_CARD;			
+			chip->card_wp |= SD_CARD;
 		}
 		RTSX_DEBUGP(("CSD WP Status: 0x%x\n", rsp[15]));
 	}
@@ -491,31 +491,31 @@ static int sd_check_csd(struct rtsx_chip *chip, char check_wp)
 static int sd_set_sample_push_timing(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
-	
+
 	if (CHK_SD_SDR104(sd_card) || CHK_SD_SDR50(sd_card)) {
-		RTSX_WRITE_REG(chip, SD_CFG1, 0x0C | SD_ASYNC_FIFO_NOT_RST, 
+		RTSX_WRITE_REG(chip, SD_CFG1, 0x0C | SD_ASYNC_FIFO_NOT_RST,
 				SD_30_MODE | SD_ASYNC_FIFO_NOT_RST);
 		RTSX_WRITE_REG(chip, CLK_CTL, CLK_LOW_FREQ, CLK_LOW_FREQ);
-		RTSX_WRITE_REG(chip, CARD_CLK_SOURCE, 0xFF, 
+		RTSX_WRITE_REG(chip, CARD_CLK_SOURCE, 0xFF,
 				CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
 		RTSX_WRITE_REG(chip, CLK_CTL, CLK_LOW_FREQ, 0);
 	} else if (CHK_SD_DDR50(sd_card) || CHK_MMC_DDR52(sd_card)) {
-		RTSX_WRITE_REG(chip, SD_CFG1, 0x0C | SD_ASYNC_FIFO_NOT_RST, 
+		RTSX_WRITE_REG(chip, SD_CFG1, 0x0C | SD_ASYNC_FIFO_NOT_RST,
 				SD_DDR_MODE | SD_ASYNC_FIFO_NOT_RST);
 		RTSX_WRITE_REG(chip, CLK_CTL, CLK_LOW_FREQ, CLK_LOW_FREQ);
-		RTSX_WRITE_REG(chip, CARD_CLK_SOURCE, 0xFF, 
+		RTSX_WRITE_REG(chip, CARD_CLK_SOURCE, 0xFF,
 				CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
 		RTSX_WRITE_REG(chip, CLK_CTL, CLK_LOW_FREQ, 0);
-		RTSX_WRITE_REG(chip, SD_PUSH_POINT_CTL, DDR_VAR_TX_CMD_DAT, 
+		RTSX_WRITE_REG(chip, SD_PUSH_POINT_CTL, DDR_VAR_TX_CMD_DAT,
 				DDR_VAR_TX_CMD_DAT);
 		RTSX_WRITE_REG(chip, SD_SAMPLE_POINT_CTL, DDR_VAR_RX_DAT | DDR_VAR_RX_CMD,
 				DDR_VAR_RX_DAT | DDR_VAR_RX_CMD);
 	} else {
 		u8 val = 0;
-		
+
 		RTSX_WRITE_REG(chip, SD_CFG1, 0x0C, SD_20_MODE);
 		RTSX_WRITE_REG(chip, CLK_CTL, CLK_LOW_FREQ, CLK_LOW_FREQ);
-		RTSX_WRITE_REG(chip, CARD_CLK_SOURCE, 0xFF, 
+		RTSX_WRITE_REG(chip, CARD_CLK_SOURCE, 0xFF,
 				CRC_FIX_CLK | SD30_VAR_CLK0 | SAMPLE_VAR_CLK1);
 		RTSX_WRITE_REG(chip, CLK_CTL, CLK_LOW_FREQ, 0);
 
@@ -527,7 +527,7 @@ static int sd_set_sample_push_timing(struct rtsx_chip *chip)
 			val = SD20_TX_NEG_EDGE;
 		}
 		RTSX_WRITE_REG(chip, SD_PUSH_POINT_CTL, SD20_TX_SEL_MASK, val);
-		
+
 		if ((chip->sd_ctl & SD_SAMPLE_POINT_CTL_MASK) == SD_SAMPLE_POINT_AUTO) {
 			if (chip->asic_code) {
 				if (CHK_SD_HS(sd_card) || CHK_MMC_52M(sd_card)) {
@@ -545,14 +545,14 @@ static int sd_set_sample_push_timing(struct rtsx_chip *chip)
 		}
 		RTSX_WRITE_REG(chip, SD_SAMPLE_POINT_CTL, SD20_RX_SEL_MASK, val);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
 static void sd_choose_proper_clock(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
-	
+
 	if (CHK_SD_SDR104(sd_card)) {
 		if (chip->asic_code) {
 			sd_card->sd_clock = chip->asic_sd_sdr104_clk;
@@ -595,7 +595,7 @@ static void sd_choose_proper_clock(struct rtsx_chip *chip)
 static int sd_set_clock_divider(struct rtsx_chip *chip, u8 clk_div)
 {
 	RTSX_WRITE_REG(chip, SD_CFG1, SD_CLK_DIVIDE_MASK, clk_div);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -610,7 +610,7 @@ static int sd_set_init_para(struct rtsx_chip *chip)
 	}
 
 	sd_choose_proper_clock(chip);
-	
+
 	retval = switch_clock(chip, sd_card->sd_clock);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -650,24 +650,24 @@ static int sd_update_lock_status(struct rtsx_chip *chip)
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
 	u8 rsp[5];
-	
+
 	retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, rsp, 5);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (rsp[1] & 0x02) {
 		sd_card->sd_lock_status |= SD_LOCKED;
 	} else {
 		sd_card->sd_lock_status &= ~SD_LOCKED;
 	}
-	
+
 	RTSX_DEBUGP(("sd_card->sd_lock_status = 0x%x\n", sd_card->sd_lock_status));
-	
+
 	if (rsp[1] & 0x01) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 #endif
@@ -677,14 +677,14 @@ static int sd_wait_state_data_ready(struct rtsx_chip *chip, u8 state, u8 data_re
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval, i;
 	u8 rsp[5];
-	
+
 	for (i = 0; i < polling_cnt; i++) {
-		retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+		retval = sd_send_cmd_get_rsp(chip, SEND_STATUS,
 					     sd_card->sd_addr, SD_RSP_TYPE_R1, rsp, 5);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		if (((rsp[3] & 0x1E) == state) && ((rsp[3] & 0x01) == data_ready)) {
 			return STATUS_SUCCESS;
 		}
@@ -696,7 +696,7 @@ static int sd_wait_state_data_ready(struct rtsx_chip *chip, u8 state, u8 data_re
 static int sd_change_bank_voltage(struct rtsx_chip *chip, u8 voltage)
 {
 	int retval;
-	
+
 	if (voltage == SD_IO_3V3) {
 		if (chip->asic_code) {
 			retval = rtsx_write_phy_register(chip, 0x08, 0x4FC0 | chip->phy_voltage);
@@ -718,7 +718,7 @@ static int sd_change_bank_voltage(struct rtsx_chip *chip, u8 voltage)
 	} else {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -733,11 +733,11 @@ static int sd_voltage_switch(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	udelay(chip->sd_voltage_switch_delay);
 
 	RTSX_READ_REG(chip, SD_BUS_STAT, &stat);
-	if (stat & (SD_CMD_STATUS | SD_DAT3_STATUS | SD_DAT2_STATUS | 
+	if (stat & (SD_CMD_STATUS | SD_DAT3_STATUS | SD_DAT2_STATUS |
 				SD_DAT1_STATUS | SD_DAT0_STATUS)) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
@@ -753,9 +753,9 @@ static int sd_voltage_switch(struct rtsx_chip *chip)
 	wait_timeout(10);
 
 	RTSX_READ_REG(chip, SD_BUS_STAT, &stat);
-	if ((stat & (SD_CMD_STATUS | SD_DAT3_STATUS | SD_DAT2_STATUS | 
-				SD_DAT1_STATUS | SD_DAT0_STATUS)) != 
-			(SD_CMD_STATUS | SD_DAT3_STATUS | SD_DAT2_STATUS | 
+	if ((stat & (SD_CMD_STATUS | SD_DAT3_STATUS | SD_DAT2_STATUS |
+				SD_DAT1_STATUS | SD_DAT0_STATUS)) !=
+			(SD_CMD_STATUS | SD_DAT3_STATUS | SD_DAT2_STATUS |
 				SD_DAT1_STATUS | SD_DAT0_STATUS)) {
 		RTSX_DEBUGP(("SD_BUS_STAT: 0x%x\n", stat));
 		rtsx_write_register(chip, SD_BUS_STAT, SD_CLK_TOGGLE_EN | SD_CLK_FORCE_STOP, 0);
@@ -789,7 +789,7 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
 	int retval;
 	int ddr_rx = 0;
 
-	RTSX_DEBUGP(("sd_change_phase (sample_point = %d, tune_dir = %d)\n", 
+	RTSX_DEBUGP(("sd_change_phase (sample_point = %d, tune_dir = %d)\n",
 				sample_point, tune_dir));
 
 	if (tune_dir == TUNE_RX) {
@@ -820,16 +820,16 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
 		if (ddr_rx) {
 			RTSX_WRITE_REG(chip, SD_VP_CTL, PHASE_CHANGE, PHASE_CHANGE);
 			udelay(50);
-			RTSX_WRITE_REG(chip, SD_VP_CTL, 0xFF, 
+			RTSX_WRITE_REG(chip, SD_VP_CTL, 0xFF,
 					PHASE_CHANGE | PHASE_NOT_RESET | sample_point);
 		} else {
 			RTSX_WRITE_REG(chip, CLK_CTL, CHANGE_CLK, CHANGE_CLK);
 			udelay(50);
-			RTSX_WRITE_REG(chip, SD_VP_CTL, 0xFF, 
+			RTSX_WRITE_REG(chip, SD_VP_CTL, 0xFF,
 					PHASE_NOT_RESET | sample_point);
 		}
 		udelay(100);
-		
+
 		rtsx_init_cmd(chip);
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_DCMPS_CTL, DCMPS_CHANGE, DCMPS_CHANGE);
 		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_DCMPS_CTL, DCMPS_CHANGE_DONE, DCMPS_CHANGE_DONE);
@@ -837,7 +837,7 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, Fail);
 		}
-		
+
 		val = *rtsx_get_cmd_data(chip);
 		if (val & DCMPS_ERROR) {
 			TRACE_GOTO(chip, Fail);
@@ -853,11 +853,11 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
 		}
 		udelay(50);
 	}
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG1, SD_ASYNC_FIFO_NOT_RST, 0);
 
 	return STATUS_SUCCESS;
-	
+
 Fail:
 #if DBG
 	rtsx_read_register(chip, SD_VP_CTL, &val);
@@ -865,7 +865,7 @@ Fail:
 	rtsx_read_register(chip, SD_DCMPS_CTL, &val);
 	RTSX_DEBUGP(("SD_DCMPS_CTL: 0x%x\n", val));
 #endif
-	
+
 	rtsx_write_register(chip, SD_DCMPS_CTL, DCMPS_CHANGE, 0);
 	rtsx_write_register(chip, SD_VP_CTL, PHASE_CHANGE, 0);
 	wait_timeout(10);
@@ -905,7 +905,7 @@ static int sd_check_spec(struct rtsx_chip *chip, u8 bus_width)
 	return STATUS_SUCCESS;
 }
 
-static int sd_query_switch_result(struct rtsx_chip *chip, u8 func_group, u8 func_to_switch, 
+static int sd_query_switch_result(struct rtsx_chip *chip, u8 func_group, u8 func_to_switch,
 		u8 *buf, int buf_len)
 {
 	u8 support_mask = 0, query_switch = 0, switch_busy = 0;
@@ -1003,30 +1003,30 @@ static int sd_query_switch_result(struct rtsx_chip *chip, u8 func_group, u8 func
 	}
 
 	if (func_group == SD_FUNC_GROUP_1) {
-		if (!(buf[support_offset] & support_mask) || 
+		if (!(buf[support_offset] & support_mask) ||
 				((buf[query_switch_offset] & 0x0F) != query_switch)) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
 
-	if ((buf[DATA_STRUCTURE_VER_OFFSET] == 0x01) && 
+	if ((buf[DATA_STRUCTURE_VER_OFFSET] == 0x01) &&
 		    ((buf[check_busy_offset] & switch_busy) == switch_busy)) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
-static int sd_check_switch_mode(struct rtsx_chip *chip, u8 mode, 
+static int sd_check_switch_mode(struct rtsx_chip *chip, u8 mode,
 		u8 func_group, u8 func_to_switch, u8 bus_width)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
 	u8 cmd[5], buf[64];
 
-	RTSX_DEBUGP(("sd_check_switch_mode (mode = %d, func_group = %d, func_to_switch = %d)\n", 
+	RTSX_DEBUGP(("sd_check_switch_mode (mode = %d, func_group = %d, func_to_switch = %d)\n",
 			mode, func_group, func_to_switch));
-	
+
 	cmd[0] = 0x40 | SWITCH;
 	cmd[1] = mode;
 
@@ -1054,7 +1054,7 @@ static int sd_check_switch_mode(struct rtsx_chip *chip, u8 mode,
 		rtsx_clear_sd_error(chip);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_DUMP(buf, 64);
 
 	if (func_group == NO_ARGUMENT) {
@@ -1077,7 +1077,7 @@ static int sd_check_switch_mode(struct rtsx_chip *chip, u8 mode,
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		if ((cc > 400) || (func_to_switch > CURRENT_LIMIT_400)) {
 			RTSX_WRITE_REG(chip, OCPPARA2, SD_OCP_THD_MASK, chip->sd_800mA_ocp_thd);
 			RTSX_WRITE_REG(chip, CARD_PWR_CTL, PMOS_STRG_MASK, PMOS_STRG_800mA);
@@ -1098,11 +1098,11 @@ static u8 downgrade_switch_mode(u8 func_group, u8 func_to_switch)
 			func_to_switch --;
 		}
 	}
-	
+
 	return func_to_switch;
 }
 
-static int sd_check_switch(struct rtsx_chip *chip, 
+static int sd_check_switch(struct rtsx_chip *chip,
 		u8 func_group, u8 func_to_switch, u8 bus_width)
 {
 	int retval;
@@ -1115,12 +1115,12 @@ static int sd_check_switch(struct rtsx_chip *chip,
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 
-		retval = sd_check_switch_mode(chip, SD_CHECK_MODE, func_group, 
+		retval = sd_check_switch_mode(chip, SD_CHECK_MODE, func_group,
 				func_to_switch, bus_width);
 		if (retval == STATUS_SUCCESS) {
 			u8 stat;
 
-			retval = sd_check_switch_mode(chip, SD_SWITCH_MODE, 
+			retval = sd_check_switch_mode(chip, SD_SWITCH_MODE,
 					func_group, func_to_switch, bus_width);
 			if (retval == STATUS_SUCCESS) {
 				switch_good = 1;
@@ -1133,7 +1133,7 @@ static int sd_check_switch(struct rtsx_chip *chip,
 				TRACE_RET(chip, STATUS_FAIL);
 			}
 		}
-		
+
 		func_to_switch = downgrade_switch_mode(func_group, func_to_switch);
 
 		wait_timeout(20);
@@ -1143,7 +1143,7 @@ static int sd_check_switch(struct rtsx_chip *chip,
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
-	return STATUS_SUCCESS;	
+	return STATUS_SUCCESS;
 }
 
 static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
@@ -1152,8 +1152,8 @@ static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
 	int retval;
 	int i;
 	u8 func_to_switch = 0;
-	
-	retval = sd_check_switch_mode(chip, SD_CHECK_MODE, 
+
+	retval = sd_check_switch_mode(chip, SD_CHECK_MODE,
 			NO_ARGUMENT, NO_ARGUMENT, bus_width);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -1170,36 +1170,36 @@ static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
 				func_to_switch = SDR104_SUPPORT;
 			}
 			break;
-			
+
 		case DDR50_SUPPORT:
 			if ((sd_card->func_group1_mask & DDR50_SUPPORT_MASK) && chip->ddr50_en) {
 				func_to_switch = DDR50_SUPPORT;
 			}
 			break;
-			
+
 		case SDR50_SUPPORT:
 			if ((sd_card->func_group1_mask & SDR50_SUPPORT_MASK) && chip->sdr50_en) {
 				func_to_switch = SDR50_SUPPORT;
 			}
 			break;
-			
+
 		case HS_SUPPORT:
 			if (sd_card->func_group1_mask & HS_SUPPORT_MASK) {
 				func_to_switch = HS_SUPPORT;
 			}
 			break;
-			
+
 		default:
 			continue;
 		}
-		
-		
+
+
 		if (func_to_switch) {
 			break;
 		}
 	}
 	RTSX_DEBUGP(("SD_FUNC_GROUP_1: func_to_switch = 0x%02x", func_to_switch));
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if((sd_card->sd_lock_status & SD_SDR_RST)
 			&& (DDR50_SUPPORT == func_to_switch)
@@ -1208,18 +1208,18 @@ static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
 		RTSX_DEBUGP(("Using SDR50 instead of DDR50 for SD Lock\n"));
 	}
 #endif
-	
+
 	if (func_to_switch) {
 		retval = sd_check_switch(chip, SD_FUNC_GROUP_1, func_to_switch, bus_width);
 		if (retval != STATUS_SUCCESS) {
 			if (func_to_switch == SDR104_SUPPORT) {
 				sd_card->sd_switch_fail = SDR104_SUPPORT_MASK;
 			} else if (func_to_switch == DDR50_SUPPORT) {
-				sd_card->sd_switch_fail = 
+				sd_card->sd_switch_fail =
 					SDR104_SUPPORT_MASK | DDR50_SUPPORT_MASK;
 			} else if (func_to_switch == SDR50_SUPPORT) {
-				sd_card->sd_switch_fail = 
-					SDR104_SUPPORT_MASK | DDR50_SUPPORT_MASK | 
+				sd_card->sd_switch_fail =
+					SDR104_SUPPORT_MASK | DDR50_SUPPORT_MASK |
 					SDR50_SUPPORT_MASK;
 			}
 			TRACE_RET(chip, STATUS_FAIL);
@@ -1247,7 +1247,7 @@ static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
 	if (!func_to_switch || (func_to_switch == HS_SUPPORT)) {
 		return STATUS_SUCCESS;
 	}
-	
+
 	func_to_switch = 0xFF;
 
 	for (i = 0; i < 4; i++) {
@@ -1257,30 +1257,30 @@ static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
 				func_to_switch = CURRENT_LIMIT_800;
 			}
 			break;
-			
+
 		case CURRENT_LIMIT_600:
 			if (sd_card->func_group4_mask & CURRENT_LIMIT_600_MASK) {
 				func_to_switch = CURRENT_LIMIT_600;
 			}
 			break;
-			
+
 		case CURRENT_LIMIT_400:
 			if (sd_card->func_group4_mask & CURRENT_LIMIT_400_MASK) {
 				func_to_switch = CURRENT_LIMIT_400;
 			}
 			break;
-			
+
 		case CURRENT_LIMIT_200:
 			if (sd_card->func_group4_mask & CURRENT_LIMIT_200_MASK) {
 				func_to_switch = CURRENT_LIMIT_200;
 			}
 			break;
-			
+
 		default:
 			continue;
 		}
-		
-		
+
+
 		if (func_to_switch != 0xFF) {
 			break;
 		}
@@ -1302,7 +1302,7 @@ static int sd_switch_function(struct rtsx_chip *chip, u8 bus_width)
 		RTSX_DEBUGP(("sd_card->current_limit = 0x%x\n",	sd_card->current_limit));
 		RTSX_DEBUGP(("Switch current limit finished! (%d)\n", retval));
 	}
-	
+
 	if (CHK_SD_DDR50(sd_card)) {
 		RTSX_WRITE_REG(chip, SD_PUSH_POINT_CTL, 0x06, 0);
 	}
@@ -1315,7 +1315,7 @@ static int sd_wait_data_idle(struct rtsx_chip *chip)
 	int retval = STATUS_TIMEDOUT;
 	int i;
 	u8 val = 0;
-	
+
 	for (i = 0; i < 100; i++) {
 		RTSX_READ_REG(chip, SD_DATA_STATE, &val);
 		if (val & SD_DATA_IDLE) {
@@ -1325,7 +1325,7 @@ static int sd_wait_data_idle(struct rtsx_chip *chip)
 		udelay(100);
 	}
 	RTSX_DEBUGP(("SD_DATA_STATE: 0x%02x\n", val));
-	
+
 	return retval;
 }
 
@@ -1333,27 +1333,27 @@ static int sd_sdr_tuning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
 {
 	int retval;
 	u8 cmd[5];
-	
+
 	retval = sd_change_phase(chip, sample_point, TUNE_RX);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	cmd[0] = 0x40 | SEND_TUNING_PATTERN;
 	cmd[1] = 0;
 	cmd[2] = 0;
 	cmd[3] = 0;
 	cmd[4] = 0;
 
-	retval = sd_read_data(chip, SD_TM_AUTO_TUNING, 
+	retval = sd_read_data(chip, SD_TM_AUTO_TUNING,
 			cmd, 5, 0x40, 1, SD_BUS_WIDTH_4, NULL, 0, 100);
 	if (retval != STATUS_SUCCESS) {
 		(void)sd_wait_data_idle(chip);
-		
+
 		rtsx_clear_sd_error(chip);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1362,14 +1362,14 @@ static int sd_ddr_tuning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
 	u8 cmd[5];
-	
+
 	retval = sd_change_phase(chip, sample_point, TUNE_RX);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
 	RTSX_DEBUGP(("sd ddr tuning rx\n"));
-	
+
 	retval = sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -1381,15 +1381,15 @@ static int sd_ddr_tuning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
 	cmd[3] = 0;
 	cmd[4] = 0;
 
-	retval = sd_read_data(chip, SD_TM_NORMAL_READ, 
+	retval = sd_read_data(chip, SD_TM_NORMAL_READ,
 			cmd, 5, 64, 1, SD_BUS_WIDTH_4, NULL, 0, 100);
 	if (retval != STATUS_SUCCESS) {
 		(void)sd_wait_data_idle(chip);
-		
+
 		rtsx_clear_sd_error(chip);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1398,7 +1398,7 @@ static int mmc_ddr_tunning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
 	u8 cmd[5], bus_width;
-	
+
 	if (CHK_MMC_8BIT(sd_card)) {
 		bus_width = SD_BUS_WIDTH_8;
 	} else if (CHK_MMC_4BIT(sd_card)) {
@@ -1420,11 +1420,11 @@ static int mmc_ddr_tunning_rx_cmd(struct rtsx_chip *chip, u8 sample_point)
 	cmd[3] = 0;
 	cmd[4] = 0;
 
-	retval = sd_read_data(chip, SD_TM_NORMAL_READ, 
+	retval = sd_read_data(chip, SD_TM_NORMAL_READ,
 			cmd, 5, 0x200, 1, bus_width, NULL, 0, 100);
 	if (retval != STATUS_SUCCESS) {
 		(void)sd_wait_data_idle(chip);
-		
+
 		rtsx_clear_sd_error(chip);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
@@ -1441,10 +1441,10 @@ static int sd_sdr_tuning_tx_cmd(struct rtsx_chip *chip, u8 sample_point)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, SD_RSP_80CLK_TIMEOUT_EN);
-	
-	retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, 
+
+	retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
 		SD_RSP_TYPE_R1, NULL, 0);
 	if (retval != STATUS_SUCCESS) {
 		if (sd_check_err_code(chip, SD_RSP_TIMEOUT)) {
@@ -1452,9 +1452,9 @@ static int sd_sdr_tuning_tx_cmd(struct rtsx_chip *chip, u8 sample_point)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, 0);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1468,7 +1468,7 @@ static int sd_ddr_tuning_tx_cmd(struct rtsx_chip *chip, u8 sample_point)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (CHK_SD(sd_card)) {
 		bus_width = SD_BUS_WIDTH_4;
 	} else {
@@ -1480,14 +1480,14 @@ static int sd_ddr_tuning_tx_cmd(struct rtsx_chip *chip, u8 sample_point)
 			bus_width = SD_BUS_WIDTH_1;
 		}
 	}
-	
+
 	retval = sd_wait_state_data_ready(chip, 0x08, 1, 1000);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, SD_RSP_80CLK_TIMEOUT_EN);
-	
+
 	cmd[0] = 0x40 | PROGRAM_CSD;
 	cmd[1] = 0;
 	cmd[2] = 0;
@@ -1501,11 +1501,11 @@ static int sd_ddr_tuning_tx_cmd(struct rtsx_chip *chip, u8 sample_point)
 		rtsx_write_register(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, 0);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, 0);
-	
+
 	sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1516,17 +1516,17 @@ static u8 sd_search_final_phase(struct rtsx_chip *chip, u32 phase_map, u8 tune_d
 	int i, j, cont_path_cnt;
 	int new_block, max_len, final_path_idx;
 	u8 final_phase = 0xFF;
-	
+
 	if (phase_map == 0xFFFFFFFF) {
 		if (tune_dir == TUNE_RX) {
 			final_phase = (u8)chip->sd_default_rx_phase;
 		} else {
 			final_phase = (u8)chip->sd_default_tx_phase;
 		}
-		
+
 		goto Search_Finish;
 	}
-	
+
 	cont_path_cnt = 0;
 	new_block = 1;
 	j = 0;
@@ -1549,7 +1549,7 @@ static u8 sd_search_final_phase(struct rtsx_chip *chip, u32 phase_map, u8 tune_d
 			}
 		}
 	}
-	
+
 	if (cont_path_cnt == 0) {
 		RTSX_DEBUGP(("No continuous phase path\n"));
 		goto Search_Finish;
@@ -1558,9 +1558,9 @@ static u8 sd_search_final_phase(struct rtsx_chip *chip, u32 phase_map, u8 tune_d
 		path[idx].len = path[idx].end - path[idx].start + 1;
 		path[idx].mid = path[idx].start + path[idx].len / 2;
 	}
-	
+
 	if ((path[0].start == 0) && (path[cont_path_cnt - 1].end == MAX_PHASE)) {
-		path[0].start = path[cont_path_cnt - 1].start - MAX_PHASE - 1; 
+		path[0].start = path[cont_path_cnt - 1].start - MAX_PHASE - 1;
 		path[0].len += path[cont_path_cnt - 1].len;
 		path[0].mid = path[0].start + path[0].len / 2;
 		if (path[0].mid < 0) {
@@ -1568,7 +1568,7 @@ static u8 sd_search_final_phase(struct rtsx_chip *chip, u32 phase_map, u8 tune_d
 		}
 		cont_path_cnt --;
 	}
-	
+
 	max_len = 0;
 	final_phase = 0;
 	final_path_idx = 0;
@@ -1578,21 +1578,21 @@ static u8 sd_search_final_phase(struct rtsx_chip *chip, u32 phase_map, u8 tune_d
 			final_phase = (u8)path[i].mid;
 			final_path_idx = i;
 		}
-		
+
 		RTSX_DEBUGP(("path[%d].start = %d\n", i, path[i].start));
 		RTSX_DEBUGP(("path[%d].end = %d\n", i, path[i].end));
 		RTSX_DEBUGP(("path[%d].len = %d\n", i, path[i].len));
 		RTSX_DEBUGP(("path[%d].mid = %d\n", i, path[i].mid));
 		RTSX_DEBUGP(("\n"));
 	}
-	
+
 	if (tune_dir == TUNE_TX) {
 		if (CHK_SD_SDR104(sd_card)) {
 			if( max_len > 15 ) {
-				int temp_mid = (max_len - 16) / 2;	
-				int temp_final_phase =  
+				int temp_mid = (max_len - 16) / 2;
+				int temp_final_phase =
 					path[final_path_idx].end - (max_len - (6 + temp_mid));
-				
+
 				if (temp_final_phase < 0) {
 					final_phase = (u8)(temp_final_phase + MAX_PHASE + 1);
 				} else {
@@ -1601,10 +1601,10 @@ static u8 sd_search_final_phase(struct rtsx_chip *chip, u32 phase_map, u8 tune_d
 			}
 		} else if (CHK_SD_SDR50(sd_card)) {
 			if( max_len > 12 ) {
-				int temp_mid = (max_len - 13) / 2;	
-				int temp_final_phase = 
+				int temp_mid = (max_len - 13) / 2;
+				int temp_final_phase =
 					path[final_path_idx].end - (max_len - (3 + temp_mid));
-				
+
 				if (temp_final_phase < 0) {
 					final_phase = (u8)(temp_final_phase + MAX_PHASE + 1);
 				} else {
@@ -1641,7 +1641,7 @@ static int sd_tuning_rx(struct rtsx_chip *chip)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	for (i = 0; i < RX_TUNING_CNT; i++) {
 		raw_phase_map[i] = 0;
 		for (j = MAX_PHASE; j >= 0; j--) {
@@ -1649,7 +1649,7 @@ static int sd_tuning_rx(struct rtsx_chip *chip)
 				sd_set_err_code(chip, SD_NO_CARD);
 				TRACE_RET(chip, STATUS_FAIL);
 			}
-			
+
 			retval = tuning_cmd(chip, (u8)j);
 			if (retval == STATUS_SUCCESS) {
 				raw_phase_map[i] |= 1 << j;
@@ -1659,24 +1659,24 @@ static int sd_tuning_rx(struct rtsx_chip *chip)
 		if (raw_phase_map[i] == 0)
 			break;
 	}
-	
+
 	phase_map = 0xFFFFFFFF;
 	for (i = 0; i < RX_TUNING_CNT; i++) {
 		RTSX_DEBUGP(("RX raw_phase_map[%d] = 0x%08x\n", i, raw_phase_map[i]));
 		phase_map &= raw_phase_map[i];
 	}
 	RTSX_DEBUGP(("RX phase_map = 0x%08x\n", phase_map));
-	
+
 	final_phase = sd_search_final_phase(chip, phase_map, TUNE_RX);
 	if (final_phase == 0xFF) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_change_phase(chip, final_phase, TUNE_RX);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1687,46 +1687,46 @@ static int sd_ddr_pre_tuning_tx(struct rtsx_chip *chip)
 	int i;
 	u32 phase_map;
 	u8 final_phase;
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, SD_RSP_80CLK_TIMEOUT_EN);
-	
+
 	phase_map = 0;
 	for (i = MAX_PHASE; i >= 0; i--) {
 		if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
 			sd_set_err_code(chip, SD_NO_CARD);
-			rtsx_write_register(chip, SD_CFG3, 
+			rtsx_write_register(chip, SD_CFG3,
 						SD_RSP_80CLK_TIMEOUT_EN, 0);
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		retval = sd_change_phase(chip, (u8)i, TUNE_TX);
 		if (retval != STATUS_SUCCESS) {
 			continue;
 		}
-		
-		retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, 
+
+		retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
 				SD_RSP_TYPE_R1, NULL, 0);
 		if ((retval == STATUS_SUCCESS) || !sd_check_err_code(chip, SD_RSP_TIMEOUT)) {
 			phase_map |= 1 << i;
 		}
 	}
-	
+
 	RTSX_WRITE_REG(chip, SD_CFG3, SD_RSP_80CLK_TIMEOUT_EN, 0);
-	
+
 	RTSX_DEBUGP(("DDR TX pre tune phase_map = 0x%08x\n", phase_map));
-	
+
 	final_phase = sd_search_final_phase(chip, phase_map, TUNE_TX);
 	if (final_phase == 0xFF) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_change_phase(chip, final_phase, TUNE_TX);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_DEBUGP(("DDR TX pre tune phase: %d\n", (int)final_phase));
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1752,17 +1752,17 @@ static int sd_tuning_tx(struct rtsx_chip *chip)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	for (i = 0; i < TX_TUNING_CNT; i++) {
 		raw_phase_map[i] = 0;
 		for (j = MAX_PHASE; j >= 0; j--) {
 			if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
 				sd_set_err_code(chip, SD_NO_CARD);
-				rtsx_write_register(chip, SD_CFG3, 
+				rtsx_write_register(chip, SD_CFG3,
 						    SD_RSP_80CLK_TIMEOUT_EN, 0);
 				TRACE_RET(chip, STATUS_FAIL);
 			}
-		
+
 			retval = tuning_cmd(chip, (u8)j);
 			if (retval == STATUS_SUCCESS) {
 				raw_phase_map[i] |= 1 << j;
@@ -1772,24 +1772,24 @@ static int sd_tuning_tx(struct rtsx_chip *chip)
 		if (raw_phase_map[i] == 0)
 			break;
 	}
-	
+
 	phase_map = 0xFFFFFFFF;
 	for (i = 0; i < TX_TUNING_CNT; i++) {
 		RTSX_DEBUGP(("TX raw_phase_map[%d] = 0x%08x\n", i, raw_phase_map[i]));
 		phase_map &= raw_phase_map[i];
 	}
 	RTSX_DEBUGP(("TX phase_map = 0x%08x\n", phase_map));
-	
+
 	final_phase = sd_search_final_phase(chip, phase_map, TUNE_TX);
 	if (final_phase == 0xFF) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_change_phase(chip, final_phase, TUNE_TX);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1801,19 +1801,19 @@ static int sd_sdr_tuning(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_tuning_rx(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
 static int sd_ddr_tuning(struct rtsx_chip *chip)
 {
 	int retval;
-	
+
 	if (!(chip->sd_ctl & SD_DDR_TX_PHASE_SET_BY_USER)) {
 		retval = sd_ddr_pre_tuning_tx(chip);
 		if (retval != STATUS_SUCCESS) {
@@ -1825,26 +1825,26 @@ static int sd_ddr_tuning(struct rtsx_chip *chip)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	retval = sd_tuning_rx(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (!(chip->sd_ctl & SD_DDR_TX_PHASE_SET_BY_USER)) {
 		retval = sd_tuning_tx(chip);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
 static int mmc_ddr_tuning(struct rtsx_chip *chip)
 {
 	int retval;
-	
+
 	if (!(chip->sd_ctl & MMC_DDR_TX_PHASE_SET_BY_USER)) {
 		retval = sd_ddr_pre_tuning_tx(chip);
 		if (retval != STATUS_SUCCESS) {
@@ -1856,19 +1856,19 @@ static int mmc_ddr_tuning(struct rtsx_chip *chip)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	retval = sd_tuning_rx(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (!(chip->sd_ctl & MMC_DDR_TX_PHASE_SET_BY_USER)) {
 		retval = sd_tuning_tx(chip);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1877,12 +1877,12 @@ int sd_switch_clock(struct rtsx_chip *chip)
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
 	int re_tuning = 0;
-	
+
 	retval = select_card(chip, SD_CARD);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if ((CHK_SD30_SPEED(sd_card) || CHK_MMC_DDR52(sd_card))) {
 		if (sd_card->need_retune && (sd_card->sd_clock != chip->cur_clk)) {
 			re_tuning = 1;
@@ -1894,7 +1894,7 @@ int sd_switch_clock(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (re_tuning) {
 		if (CHK_SD(sd_card)) {
 			if (CHK_SD_DDR50(sd_card)) {
@@ -1913,7 +1913,7 @@ int sd_switch_clock(struct rtsx_chip *chip)
 		}
 	}
 
-	return STATUS_SUCCESS;	
+	return STATUS_SUCCESS;
 }
 
 static int sd_prepare_reset(struct rtsx_chip *chip)
@@ -1926,12 +1926,12 @@ static int sd_prepare_reset(struct rtsx_chip *chip)
 	} else {
 		sd_card->sd_clock = CLK_30;
 	}
-	
+
 	sd_card->sd_type = 0;
 	sd_card->seq_mode = 0;
 	sd_card->sd_data_buf_ready = 0;
 	sd_card->capacity = 0;
-	
+
 #ifdef SUPPORT_SD_LOCK
 	sd_card->sd_lock_status = 0;
 	sd_card->sd_erase_status = 0;
@@ -1944,7 +1944,7 @@ static int sd_prepare_reset(struct rtsx_chip *chip)
 		TRACE_RET(chip, retval);
 	}
 
-	RTSX_WRITE_REG(chip, SD_CFG1, 0xFF, 
+	RTSX_WRITE_REG(chip, SD_CFG1, 0xFF,
 		SD_CLK_DIVIDE_128 | SD_20_MODE | SD_BUS_WIDTH_1);
 	RTSX_WRITE_REG(chip, SD_SAMPLE_POINT_CTL, 0xFF, SD20_RX_POS_EDGE);
 	RTSX_WRITE_REG(chip, SD_PUSH_POINT_CTL, 0xFF, 0);
@@ -1955,7 +1955,7 @@ static int sd_prepare_reset(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -1966,14 +1966,14 @@ int sd_pull_ctl_disable(struct rtsx_chip *chip)
 		RTSX_WRITE_REG(chip, CARD_PULL_CTL3, 0xFF, 0xE5);
 	else
 		RTSX_WRITE_REG(chip, CARD_PULL_CTL3, 0xFF, 0xD5);
-	
+
 	return STATUS_SUCCESS;
 }
 
 int sd_pull_ctl_enable(struct rtsx_chip *chip)
 {
 	int retval;
-	
+
 	/* SD Data0~3: pull up
 	 * SD CD: pull up
 	 * SD WP: pull up
@@ -1992,36 +1992,36 @@ int sd_pull_ctl_enable(struct rtsx_chip *chip)
 	if (retval < 0) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
 static int sd_init_power(struct rtsx_chip *chip)
 {
 	int retval;
-	
+
 	RTSX_WRITE_REG(chip, PWR_GATE_CTRL, LDO3318_PWR_MASK, LDO_OFF);
-	
+
 	retval = sd_power_off_card3v3(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_change_bank_voltage(chip, SD_IO_3V3);
 	if (retval != STATUS_SUCCESS)
 		TRACE_RET(chip, STATUS_FAIL);
-	
+
 	RTSX_WRITE_REG(chip, SD30_DRIVE_SEL, 0x07, chip->sd30_drive_sel_3v3);
 
 	if (!chip->ft2_fast_mode) {
 		wait_timeout(250);
 	}
-	
+
 	retval = enable_card_clock(chip, SD_CARD);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (chip->asic_code) {
 		retval = sd_pull_ctl_enable(chip);
 		if (retval != STATUS_SUCCESS) {
@@ -2030,7 +2030,7 @@ static int sd_init_power(struct rtsx_chip *chip)
 	} else {
 		RTSX_WRITE_REG(chip, FPGA_PULL_CTL, FPGA_SD_PULL_CTL_BIT | 0x20, 0);
 	}
-	
+
 	if (chip->ft2_fast_mode) {
 		RTSX_WRITE_REG(chip, PWR_GATE_CTRL, LDO3318_PWR_MASK, LDO_ON);
 	} else {
@@ -2057,8 +2057,8 @@ static int sd_dummy_clock(struct rtsx_chip *chip)
 {
 	RTSX_WRITE_REG(chip, SD_BUS_STAT, SD_CLK_TOGGLE_EN, SD_CLK_TOGGLE_EN);
 	wait_timeout(5);
-	RTSX_WRITE_REG(chip, SD_BUS_STAT, SD_CLK_TOGGLE_EN, 0x00);			
-	
+	RTSX_WRITE_REG(chip, SD_BUS_STAT, SD_CLK_TOGGLE_EN, 0x00);
+
 	return STATUS_SUCCESS;
 }
 
@@ -2071,13 +2071,13 @@ static int sd_read_lba0(struct rtsx_chip *chip)
 	u8 cmd[5];
 #else
 	u8 *buf;
-	
+
 	buf = (u8 *)rtsx_alloc_dma_buf(chip, 512, GFP_KERNEL);
 	if (buf == NULL) {
 		TRACE_RET(chip, STATUS_ERROR);
 	}
 #endif
-	
+
 	if (CHK_SD(sd_card)) {
 		bus_width = SD_BUS_WIDTH_4;
 	} else {
@@ -2089,7 +2089,7 @@ static int sd_read_lba0(struct rtsx_chip *chip)
 			bus_width = SD_BUS_WIDTH_1;
 		}
 	}
-	
+
 #ifdef USING_PPBUF
 	cmd[0] = 0x40 | READ_SINGLE_BLOCK;
 	cmd[1] = 0;
@@ -2104,7 +2104,7 @@ static int sd_read_lba0(struct rtsx_chip *chip)
 	}
 #else
 	rtsx_init_cmd(chip);
-	
+
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF, 0x40 | READ_SINGLE_BLOCK);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD1, 0xFF, 0);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD2, 0xFF, 0);
@@ -2118,33 +2118,33 @@ static int sd_read_lba0(struct rtsx_chip *chip)
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG1, 0x03, bus_width);
 
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, 
-			SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF,
+			SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 			SD_CHECK_CRC7 | SD_RSP_LEN_6);
-	
+
 	trans_dma_enable(DMA_FROM_DEVICE, chip, 512, DMA_512);
-	
+
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, SD_TM_NORMAL_READ | SD_TRANSFER_START);
 	rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
-	
+
 	rtsx_send_cmd_no_wait(chip);
-	
+
 	retval = rtsx_transfer_data(chip, SD_CARD, buf, 512, 0, DMA_FROM_DEVICE, 100);
 	if (retval < 0) {
 		sd_print_debug_reg(chip);
 		rtsx_free_dma_buf(chip, buf);
 		rtsx_clear_sd_error(chip);
-		
+
 		if (retval == -ETIMEDOUT) {
 			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		}
 
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	rtsx_free_dma_buf(chip, buf);
 #endif
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -2155,29 +2155,29 @@ static int sd_check_wp_state(struct rtsx_chip *chip)
 	u32 val;
 	u16 sd_card_type;
 	u8 cmd[5], buf[64];
-	
+
 	retval = sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	cmd[0] = 0x40 | SD_STATUS;
 	cmd[1] = 0;
 	cmd[2] = 0;
 	cmd[3] = 0;
 	cmd[4] = 0;
-	
+
 	retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, 64, 1, SD_BUS_WIDTH_4, buf, 64, 250);
 	if (retval != STATUS_SUCCESS) {
 		rtsx_clear_sd_error(chip);
-		
+
 		sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_DEBUGP(("ACMD13:\n"));
 	RTSX_DUMP(buf, 64);
-	
+
 	sd_card_type = ((u16)buf[2] << 8) | buf[3];
 	RTSX_DEBUGP(("sd_card_type = 0x%04x\n", sd_card_type));
 	if ((sd_card_type == 0x0001) || (sd_card_type == 0x0002)) {
@@ -2188,7 +2188,7 @@ static int sd_check_wp_state(struct rtsx_chip *chip)
 	if (val & SD_WRITE_PROTECT) {
 		chip->card_wp |= SD_CARD;
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -2203,9 +2203,9 @@ static int reset_sd(struct rtsx_chip *chip)
 	u32 voltage = 0;
 	int sd20_mode = chip->sd20_mode;
 	int read_lba0 = 1;
-	
+
 	RTSX_DEBUGP(("chip->sd20_mode = %d\n", chip->sd20_mode));
-	
+
 	SET_SD(sd_card);
 
 Switch_Fail:
@@ -2214,7 +2214,7 @@ Switch_Fail:
 	j = 0;
 	k = 0;
 	hi_cap_flow = 0;
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if(sd_card->sd_lock_status & SD_UNLOCK_POW_ON) {
 		goto SD_UNLOCK_ENTRY;
@@ -2241,15 +2241,15 @@ RTY_SD_RST:
 
 	retval = sd_send_cmd_get_rsp(chip, SEND_IF_COND, 0x000001AA, SD_RSP_TYPE_R7, rsp, 5);
 	if (retval == STATUS_SUCCESS) {
-		if((rsp[4] == 0xAA) && ((rsp[3] & 0x0f) == 0x01)) { 
+		if((rsp[4] == 0xAA) && ((rsp[3] & 0x0f) == 0x01)) {
 			hi_cap_flow = 1;
 			if (sd20_mode) {
-				voltage = SUPPORT_VOLTAGE | 
+				voltage = SUPPORT_VOLTAGE |
 					SUPPORT_HIGH_AND_EXTENDED_CAPACITY;
 			} else {
-				voltage = SUPPORT_VOLTAGE | 
-					SUPPORT_HIGH_AND_EXTENDED_CAPACITY | 
-					SUPPORT_MAX_POWER_PERMANCE | SUPPORT_1V8; 
+				voltage = SUPPORT_VOLTAGE |
+					SUPPORT_HIGH_AND_EXTENDED_CAPACITY |
+					SUPPORT_MAX_POWER_PERMANCE | SUPPORT_1V8;
 			}
 		}
 	}
@@ -2293,7 +2293,7 @@ RTY_SD_RST:
 
 		i++;
 		wait_timeout(20);
-	} while (!(rsp[1] & 0x80) && (i < 255));  
+	} while (!(rsp[1] & 0x80) && (i < 255));
 
 	if (i == 255) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -2338,7 +2338,7 @@ RTY_SD_RST:
 
 		sd_card->sd_addr = (u32)rsp[1] << 24;
 		sd_card->sd_addr += (u32)rsp[2] << 16;
-		
+
 		if (sd_card->sd_addr) {
 			break;
 		}
@@ -2353,14 +2353,14 @@ RTY_SD_RST:
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 SD_UNLOCK_ENTRY:
 	retval = sd_update_lock_status(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if(sd_card->sd_lock_status & SD_LOCKED) {
 		sd_card->sd_lock_status |= (SD_LOCK_1BIT_MODE | SD_PWD_EXIST);
 		return STATUS_SUCCESS;
@@ -2387,18 +2387,18 @@ SD_UNLOCK_ENTRY:
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-			
+
 		switch_bus_width = SD_BUS_WIDTH_4;
-	} else {			
+	} else {
 		switch_bus_width = SD_BUS_WIDTH_1;
 	}
-	
+
 	retval = sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, 0x200, SD_RSP_TYPE_R1, NULL, 0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
-	retval = sd_set_clock_divider(chip, SD_CLK_DIVIDE_0);	
+	retval = sd_set_clock_divider(chip, SD_CLK_DIVIDE_0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
@@ -2413,7 +2413,7 @@ SD_UNLOCK_ENTRY:
 			sd_card->sd_switch_fail = SDR104_SUPPORT_MASK |
 				DDR50_SUPPORT_MASK | SDR50_SUPPORT_MASK;
 		}
-		
+
 		retval = sd_check_spec(chip, switch_bus_width);
 		if (retval == STATUS_SUCCESS) {
 			retval = sd_switch_function(chip, switch_bus_width);
@@ -2428,7 +2428,7 @@ SD_UNLOCK_ENTRY:
 			}
 		}
 	}
-	
+
 	if (support_1v8) {
 		RTSX_WRITE_REG(chip, SD30_DRIVE_SEL, 0x07, chip->sd30_drive_sel_1v8);
 	} else {
@@ -2439,9 +2439,9 @@ SD_UNLOCK_ENTRY:
 		retval = sd_send_cmd_get_rsp(chip, SET_BUS_WIDTH, 2, SD_RSP_TYPE_R1, NULL, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
-		}		
+		}
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 	sd_card->sd_lock_status &= ~SD_LOCK_1BIT_MODE;
 #endif
@@ -2460,16 +2460,16 @@ SD_UNLOCK_ENTRY:
 
 		if (retval != STATUS_SUCCESS)
 			goto SD20_MODE;
-		
+
 		sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
-		
+
 		if (CHK_SD_DDR50(sd_card)) {
 			retval = sd_wait_state_data_ready(chip, 0x08, 1, 1000);
 			if (retval != STATUS_SUCCESS) {
 				read_lba0 = 0;
 			}
 		}
-	
+
 		if (read_lba0) {
 			retval = sd_read_lba0(chip);
 			if (retval != STATUS_SUCCESS) {
@@ -2488,7 +2488,7 @@ SD_UNLOCK_ENTRY:
 	}
 
 	chip->card_bus_width[chip->card2lun[SD_CARD]] = 4;
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if(sd_card->sd_lock_status & SD_UNLOCK_POW_ON) {
 		RTSX_WRITE_REG(chip, SD_BLOCK_CNT_H, 0xFF, 0x02);
@@ -2527,7 +2527,7 @@ static int mmc_test_switch_bus(struct rtsx_chip *chip, u8 width)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (width == MMC_8BIT_BUS) {
 		buf[0] = 0x55;
 		buf[1] = 0xAA;
@@ -2540,7 +2540,7 @@ static int mmc_test_switch_bus(struct rtsx_chip *chip, u8 width)
 		byte_cnt = 4;
 		bus_width = SD_BUS_WIDTH_4;
 	}
-	
+
 	retval = sd_write_data(chip, SD_TM_AUTO_WRITE_3,
 			NULL, 0, byte_cnt, 1, bus_width, buf, len, 100);
 	if (retval != STATUS_SUCCESS) {
@@ -2552,11 +2552,11 @@ static int mmc_test_switch_bus(struct rtsx_chip *chip, u8 width)
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	}
-	
+
 	RTSX_DEBUGP(("SD/MMC CMD %d\n", BUSTEST_R));
-	
+
 	rtsx_init_cmd(chip);
-	
+
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF, 0x40 | BUSTEST_R);
 
 	if (width == MMC_8BIT_BUS) {
@@ -2568,8 +2568,8 @@ static int mmc_test_switch_bus(struct rtsx_chip *chip, u8 width)
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_L, 0xFF, 1);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H, 0xFF, 0);
 
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, 
-			SD_CALCULATE_CRC7 | SD_NO_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF,
+			SD_CALCULATE_CRC7 | SD_NO_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 			SD_CHECK_CRC7 | SD_RSP_LEN_6);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE, 0x01, PINGPONG_BUFFER);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, SD_TM_NORMAL_READ | SD_TRANSFER_START);
@@ -2585,15 +2585,15 @@ static int mmc_test_switch_bus(struct rtsx_chip *chip, u8 width)
 		rtsx_clear_sd_error(chip);
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	ptr = rtsx_get_cmd_data(chip) + 1;
-	
+
 	if (width == MMC_8BIT_BUS) {
 		RTSX_DEBUGP(("BUSTEST_R [8bits]: 0x%02x 0x%02x\n", ptr[0], ptr[1]));
 		if ((ptr[0] == 0xAA) && (ptr[1] == 0x55)) {
 			u8 rsp[5];
 			u32 arg;
-			
+
 			if (CHK_MMC_DDR52(sd_card)) {
 				arg = 0x03B70600;
 			} else {
@@ -2609,7 +2609,7 @@ static int mmc_test_switch_bus(struct rtsx_chip *chip, u8 width)
 		if (ptr[0] == 0xA5) {
 			u8 rsp[5];
 			u32 arg;
-			
+
 			if (CHK_MMC_DDR52(sd_card)) {
 				arg = 0x03B70500;
 			} else {
@@ -2633,7 +2633,7 @@ static int mmc_switch_timing_bus(struct rtsx_chip *chip, int switch_ddr)
 	u8 *ptr, card_type, card_type_mask = 0;
 #ifndef USING_PPBUF
 	u8 *buf;
-	
+
 	buf = (u8 *)rtsx_alloc_dma_buf(chip, 512, GFP_KERNEL);
 	if (buf == NULL) {
 		TRACE_RET(chip, STATUS_ERROR);
@@ -2643,7 +2643,7 @@ static int mmc_switch_timing_bus(struct rtsx_chip *chip, int switch_ddr)
 	CLR_MMC_HS(sd_card);
 
 	RTSX_DEBUGP(("SD/MMC CMD %d\n", SEND_EXT_CSD));
-	
+
 	rtsx_init_cmd(chip);
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF, 0x40 | SEND_EXT_CSD);
@@ -2657,46 +2657,46 @@ static int mmc_switch_timing_bus(struct rtsx_chip *chip, int switch_ddr)
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_L, 0xFF, 1);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H, 0xFF, 0);
 
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, 
-			SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF,
+			SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 			SD_CHECK_CRC7 | SD_RSP_LEN_6);
-	
+
 #ifdef USING_PPBUF
 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE, 0x01, PINGPONG_BUFFER);
 #else
 	trans_dma_enable(DMA_FROM_DEVICE, chip, 512, DMA_512);
 #endif
-	
+
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, SD_TM_NORMAL_READ | SD_TRANSFER_START);
 	rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
-	
+
 #ifdef USING_PPBUF
-	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 196, 0xFF, 0);  
-	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 212, 0xFF, 0);  
-	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 213, 0xFF, 0);  
-	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 214, 0xFF, 0);  
-	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 215, 0xFF, 0);  
+	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 196, 0xFF, 0);
+	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 212, 0xFF, 0);
+	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 213, 0xFF, 0);
+	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 214, 0xFF, 0);
+	rtsx_add_cmd(chip, READ_REG_CMD, PPBUF_BASE2 + 215, 0xFF, 0);
 
 	retval = rtsx_send_cmd(chip, SD_CARD, 1000);
 	if (retval < 0) {
 		if (retval == -ETIMEDOUT) {
 			rtsx_clear_sd_error(chip);
 
-			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, 
+			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
 					SD_RSP_TYPE_R1, NULL, 0);
 		}
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 #else
 	rtsx_send_cmd_no_wait(chip);
-	
+
 	retval = rtsx_transfer_data(chip, SD_CARD, buf, 512, 0, DMA_FROM_DEVICE, 100);
 	if (retval < 0) {
 		rtsx_free_dma_buf(chip, buf);
 		if (retval == -ETIMEDOUT) {
 			rtsx_clear_sd_error(chip);
 
-			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, 
+			sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
 					SD_RSP_TYPE_R1, NULL, 0);
 		}
 		TRACE_RET(chip, STATUS_FAIL);
@@ -2721,7 +2721,7 @@ static int mmc_switch_timing_bus(struct rtsx_chip *chip, int switch_ddr)
 	}
 
 #ifdef SUPPORT_SD_LOCK
-	if (!(sd_card->sd_lock_status & SD_SDR_RST) && 
+	if (!(sd_card->sd_lock_status & SD_SDR_RST) &&
 			(chip->sd_ctl & SUPPORT_MMC_DDR_MODE)) {
 		card_type_mask = 0x07;
 	} else {
@@ -2739,18 +2739,18 @@ static int mmc_switch_timing_bus(struct rtsx_chip *chip, int switch_ddr)
 #else
 	card_type = buf[196] & card_type_mask;
 #endif
-	if (card_type) {   
+	if (card_type) {
 		u8 rsp[5];
-		
-		if (card_type & 0x04) {  
+
+		if (card_type & 0x04) {
 			if (switch_ddr) {
 				SET_MMC_DDR52(sd_card);
 			} else {
 				SET_MMC_52M(sd_card);
 			}
-		} else if (card_type & 0x02) {  
+		} else if (card_type & 0x02) {
 			SET_MMC_52M(sd_card);
-		} else {  
+		} else {
 			SET_MMC_26M(sd_card);
 		}
 
@@ -2759,7 +2759,7 @@ static int mmc_switch_timing_bus(struct rtsx_chip *chip, int switch_ddr)
 			CLR_MMC_HS(sd_card);
 		}
 	}
-	
+
 #ifndef USING_PPBUF
 	rtsx_free_dma_buf(chip, buf);
 #endif
@@ -2811,7 +2811,7 @@ DDR_TUNING_FAIL:
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, retval);
 	}
-	
+
 	SET_MMC(sd_card);
 
 RTY_MMC_RST:
@@ -2825,8 +2825,8 @@ RTY_MMC_RST:
 			sd_set_err_code(chip, SD_NO_CARD);
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-			
-		retval = sd_send_cmd_get_rsp(chip, SEND_OP_COND, 
+
+		retval = sd_send_cmd_get_rsp(chip, SEND_OP_COND,
 				(SUPPORT_VOLTAGE|0x40000000), SD_RSP_TYPE_R3, rsp, 5);
 		if (retval != STATUS_SUCCESS) {
 			if (sd_check_err_code(chip, SD_BUSY) || sd_check_err_code(chip, SD_TO_ERR)) {
@@ -2850,7 +2850,7 @@ RTY_MMC_RST:
 
 		wait_timeout(20);
 		i++;
-	} while(!(rsp[1] & 0x80) && (i < 255));   
+	} while(!(rsp[1] & 0x80) && (i < 255));
 
 	if (i == 255) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -2891,7 +2891,7 @@ RTY_MMC_RST:
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 MMC_UNLOCK_ENTRY:
 	retval = sd_update_lock_status(chip);
@@ -2899,24 +2899,24 @@ MMC_UNLOCK_ENTRY:
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 #endif
-	
-	retval = sd_set_clock_divider(chip, SD_CLK_DIVIDE_0);	
+
+	retval = sd_set_clock_divider(chip, SD_CLK_DIVIDE_0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
 	chip->card_bus_width[chip->card2lun[SD_CARD]] = 1;
-	
+
 	if (!sd_card->mmc_dont_switch_bus) {
-		
-		if (spec_ver == 4) {  
+
+		if (spec_ver == 4) {
 			(void)mmc_switch_timing_bus(chip, switch_ddr);
 		}
 
 		if (CHK_MMC_SECTOR_MODE(sd_card) && (sd_card->capacity == 0)) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		if (switch_ddr && CHK_MMC_DDR52(sd_card)) {
 			retval = sd_set_init_para(chip);
 			if (retval != STATUS_SUCCESS) {
@@ -2932,7 +2932,7 @@ MMC_UNLOCK_ENTRY:
 				switch_ddr = 0;
 				goto DDR_TUNING_FAIL;
 			}
-			
+
 			retval = sd_wait_state_data_ready(chip, 0x08, 1, 1000);
 			if (retval == STATUS_SUCCESS) {
 				retval = sd_read_lba0(chip);
@@ -2947,7 +2947,7 @@ MMC_UNLOCK_ENTRY:
 			}
 		}
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if(sd_card->sd_lock_status & SD_UNLOCK_POW_ON) {
 		RTSX_WRITE_REG(chip, SD_BLOCK_CNT_H, 0xFF, 0x02);
@@ -2967,7 +2967,7 @@ int reset_sd_card(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
-	
+
 	memset(sd_card, 0, sizeof(struct sd_info));
 	chip->capacity[chip->card2lun[SD_CARD]] = 0;
 
@@ -2999,12 +2999,12 @@ int reset_sd_card(struct rtsx_chip *chip)
 				if (sd_check_err_code(chip, SD_NO_CARD)) {
 					TRACE_RET(chip, STATUS_FAIL);
 				}
-				
+
 				retval = sd_change_bank_voltage(chip, SD_IO_3V3);
 				if (retval != STATUS_SUCCESS) {
 					TRACE_RET(chip, STATUS_FAIL);
 				}
-				
+
 				retval = reset_mmc(chip);
 			}
 		}
@@ -3019,21 +3019,21 @@ int reset_sd_card(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_set_clock_divider(chip, SD_CLK_DIVIDE_0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 	RTSX_WRITE_REG(chip, SD_BYTE_CNT_L, 0xFF, 0);
 	RTSX_WRITE_REG(chip, SD_BYTE_CNT_H, 0xFF, 2);
-	
+
 	chip->capacity[chip->card2lun[SD_CARD]] = sd_card->capacity;
 
 	retval = sd_set_init_para(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_DEBUGP(("sd_card->sd_type = 0x%x\n", sd_card->sd_type));
 
 	return STATUS_SUCCESS;
@@ -3043,13 +3043,13 @@ static int reset_mmc_only(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
-	
+
 	sd_card->sd_type = 0;
 	sd_card->seq_mode = 0;
 	sd_card->sd_data_buf_ready = 0;
 	sd_card->capacity = 0;
 	sd_card->sd_switch_fail = 0;
-	
+
 #ifdef SUPPORT_SD_LOCK
 	sd_card->sd_lock_status = 0;
 	sd_card->sd_erase_status = 0;
@@ -3066,26 +3066,26 @@ static int reset_mmc_only(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = reset_mmc(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_set_clock_divider(chip, SD_CLK_DIVIDE_0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 	RTSX_WRITE_REG(chip, SD_BYTE_CNT_L, 0xFF, 0);
 	RTSX_WRITE_REG(chip, SD_BYTE_CNT_H, 0xFF, 2);
-	
+
 	chip->capacity[chip->card2lun[SD_CARD]] = sd_card->capacity;
 
 	retval = sd_set_init_para(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_DEBUGP(("In reset_mmc_only, sd_card->sd_type = 0x%x\n", sd_card->sd_type));
 
 	return STATUS_SUCCESS;
@@ -3096,7 +3096,7 @@ static int reset_mmc_only(struct rtsx_chip *chip)
 static int wait_data_buf_ready(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
-	int i, retval; 
+	int i, retval;
 
 	for (i = 0; i < WAIT_DATA_READY_RTY_CNT; i++) {
 		if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
@@ -3105,15 +3105,15 @@ static int wait_data_buf_ready(struct rtsx_chip *chip)
 		}
 
 		sd_card->sd_data_buf_ready = 0;
-		
-		retval = sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+
+		retval = sd_send_cmd_get_rsp(chip, SEND_STATUS,
 				sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 
 		if (sd_card->sd_data_buf_ready) {
-			return sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+			return sd_send_cmd_get_rsp(chip, SEND_STATUS,
 				sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		}
 	}
@@ -3134,7 +3134,7 @@ void sd_stop_seq_mode(struct rtsx_chip *chip)
 			return;
 		}
 
-		retval = sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION, 0, 
+		retval = sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION, 0,
 				SD_RSP_TYPE_R1b, NULL, 0);
 		if (retval != STATUS_SUCCESS) {
 			sd_set_err_code(chip, SD_STS_ERR);
@@ -3144,7 +3144,7 @@ void sd_stop_seq_mode(struct rtsx_chip *chip)
 			sd_set_err_code(chip, SD_STS_ERR);
 		}
 		sd_card->seq_mode = 0;
-		
+
 		rtsx_write_register(chip, RBCTL, RB_FLUSH, RB_FLUSH);
 	}
 }
@@ -3163,37 +3163,37 @@ static inline int sd_auto_tune_clock(struct rtsx_chip *chip)
 		case CLK_200:
 			sd_card->sd_clock = CLK_150;
 			break;
-			
+
 		case CLK_150:
 			sd_card->sd_clock = CLK_120;
 			break;
-			
+
 		case CLK_120:
 			sd_card->sd_clock = CLK_100;
 			break;
-			
+
 		case CLK_100:
 			sd_card->sd_clock = CLK_80;
 			break;
-			
+
 		case CLK_80:
 			sd_card->sd_clock = CLK_60;
 			break;
-			
+
 		case CLK_60:
 			sd_card->sd_clock = CLK_50;
 			break;
-			
+
 		default:
 			break;
 		}
 	}
-	
+
 	retval = sd_switch_clock(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -3204,13 +3204,13 @@ static int sd_stop_sequential(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
-	
-	if ((sd_card->pre_sec_cnt < 0x80) 	
+
+	if ((sd_card->pre_sec_cnt < 0x80)
 			&& (sd_card->pre_dir == DMA_FROM_DEVICE)
-			&& !CHK_SD30_SPEED(sd_card) 
+			&& !CHK_SD30_SPEED(sd_card)
 			&& !CHK_SD_HS(sd_card)
 			&& !CHK_MMC_HS(sd_card)) {
-		sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+		sd_send_cmd_get_rsp(chip, SEND_STATUS,
 				sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 	}
 
@@ -3227,38 +3227,38 @@ static int sd_stop_sequential(struct rtsx_chip *chip)
 		TRACE_RET(chip, STATUS_FAIL);
 	}
 
-	if ((sd_card->pre_sec_cnt < 0x80) 
-			&& !CHK_SD30_SPEED(sd_card) 
+	if ((sd_card->pre_sec_cnt < 0x80)
+			&& !CHK_SD30_SPEED(sd_card)
 			&& !CHK_SD_HS(sd_card)
 			&& !CHK_MMC_HS(sd_card)) {
-		sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+		sd_send_cmd_get_rsp(chip, SEND_STATUS,
 				sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
 static inline int sd_in_seq(struct sd_info *sd_card,
 			u32 start_sector, enum dma_data_direction data_dir)
 {
-	if (sd_card->pre_dir != data_dir) 
+	if (sd_card->pre_dir != data_dir)
 		return 0;
-	if ((sd_card->pre_sec_addr + sd_card->pre_sec_cnt) != start_sector) 
+	if ((sd_card->pre_sec_addr + sd_card->pre_sec_cnt) != start_sector)
 		return 0;
-	
+
 	return 1;
 }
 
 static inline u32 sd_calc_data_addr(struct sd_info *sd_card, u32 start_sector)
 {
 	u32 data_addr;
-	
+
 	if (!CHK_SD_HCXC(sd_card) && !CHK_MMC_SECTOR_MODE(sd_card)) {
 		data_addr = start_sector << 9;
 	} else {
 		data_addr = start_sector;
 	}
-	
+
 	return data_addr;
 }
 
@@ -3266,7 +3266,7 @@ static void sd_auto_read2(struct rtsx_chip *chip, u32 data_addr, u16 sector_cnt)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	u8 cfg2;
-	
+
 	rtsx_init_cmd(chip);
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_L, 0xFF, 0x00);
@@ -3283,7 +3283,7 @@ static void sd_auto_read2(struct rtsx_chip *chip, u32 data_addr, u16 sector_cnt)
 	} else {
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG1, 0x03, SD_BUS_WIDTH_1);
 	}
-	
+
 	RTSX_DEBUGP(("SD/MMC CMD %d\n", READ_MULTIPLE_BLOCK));
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF, 0x40 | READ_MULTIPLE_BLOCK);
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD1, 0xFF, (u8)(data_addr >> 24));
@@ -3312,18 +3312,18 @@ static int sd_write(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sec
 	u32 data_addr;
 	u8 cfg2;
 	int retval;
-	
+
 	data_addr = sd_calc_data_addr(sd_card, start_sector);
-	
+
 	if (sd_card->seq_mode && !sd_in_seq(sd_card, start_sector, srb->sc_data_direction)) {
 		retval = sd_stop_sequential(chip);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		sd_card->seq_mode = 0;
 	}
-	
+
 	rtsx_init_cmd(chip);
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_L, 0xFF, 0x00);
@@ -3342,7 +3342,7 @@ static int sd_write(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sec
 	}
 
 	if (sd_card->seq_mode) {
-		cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+		cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 				SD_NO_CHECK_CRC7 | SD_RSP_LEN_0;
 		if (!CHK_SD30_SPEED(sd_card)) {
 			cfg2 |= SD_NO_CHECK_WAIT_CRC_TO;
@@ -3350,8 +3350,8 @@ static int sd_write(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sec
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, cfg2);
 
 		trans_dma_enable(srb->sc_data_direction, chip, sector_cnt * 512, DMA_512);
-		
-		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, 
+
+		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF,
 			     SD_TM_AUTO_WRITE_3 | SD_TRANSFER_START);
 
 		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
@@ -3374,16 +3374,16 @@ static int sd_write(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sec
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 
-		retval = sd_send_cmd_get_rsp(chip, WRITE_MULTIPLE_BLOCK, 
+		retval = sd_send_cmd_get_rsp(chip, WRITE_MULTIPLE_BLOCK,
 				data_addr, SD_RSP_TYPE_R1, NULL, 0);
 		if (retval != STATUS_SUCCESS) {
 			chip->rw_need_retry = 1;
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		rtsx_init_cmd(chip);
 
-		cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+		cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 				SD_NO_CHECK_CRC7 | SD_RSP_LEN_0;
 		if (!CHK_SD30_SPEED(sd_card)) {
 			cfg2 |= SD_NO_CHECK_WAIT_CRC_TO;
@@ -3392,16 +3392,16 @@ static int sd_write(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sec
 
 		trans_dma_enable(srb->sc_data_direction, chip, sector_cnt * 512, DMA_512);
 
-		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, 
+		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF,
 				SD_TM_AUTO_WRITE_3 | SD_TRANSFER_START);
-		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, 
+		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER,
 				SD_TRANSFER_END, SD_TRANSFER_END);
 
 		rtsx_send_cmd_no_wait(chip);
 
 		sd_card->seq_mode = 1;
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -3410,12 +3410,12 @@ static int sd_read(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sect
 	struct sd_info *sd_card = &(chip->sd_card);
 	u32 data_addr;
 	int retval;
-	
+
 	data_addr = sd_calc_data_addr(sd_card, start_sector);
-	
+
 	if (sd_card->seq_mode) {
 		int stop = 0;
-		
+
 		if (sd_in_seq(sd_card, start_sector, srb->sc_data_direction)) {
 			if ((sd_card->total_sec_cnt + sector_cnt) > PRE_READ_30M) {
 				rtsx_wait_rb_full(chip);
@@ -3424,20 +3424,20 @@ static int sd_read(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sect
 		} else {
 			stop = 1;
 		}
-		
+
 		if (stop) {
 			retval = sd_stop_sequential(chip);
 			if (retval != STATUS_SUCCESS) {
 				TRACE_RET(chip, STATUS_FAIL);
 			}
-			
+
 			sd_card->seq_mode = 0;
 		}
 	}
-	
+
 	if (!sd_card->seq_mode) {
 		sd_card->total_sec_cnt = 0;
-		
+
 		if (sector_cnt >= PRE_READ_TH) {
 			sd_auto_read2(chip, data_addr, PRE_READ_30M);
 			sd_card->seq_mode = 1;
@@ -3453,20 +3453,20 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
-	
+
 	if (srb->sc_data_direction == DMA_FROM_DEVICE) {
-		RTSX_DEBUGP(("sd_rw: Read %d %s from 0x%x\n", sector_cnt, 
+		RTSX_DEBUGP(("sd_rw: Read %d %s from 0x%x\n", sector_cnt,
 			     (sector_cnt > 1) ? "sectors" : "sector", start_sector));
 	} else {
-		RTSX_DEBUGP(("sd_rw: Write %d %s to 0x%x\n", sector_cnt, 
+		RTSX_DEBUGP(("sd_rw: Write %d %s to 0x%x\n", sector_cnt,
 			     (sector_cnt > 1) ? "sectors" : "sector", start_sector));
 	}
 
 	sd_card->cleanup_counter = 0;
-	
+
 	if (!(chip->card_ready & SD_CARD)) {
 		sd_card->seq_mode = 0;
-		
+
 		retval = reset_sd_card(chip);
 		if (retval == STATUS_SUCCESS) {
 			chip->card_ready |= SD_CARD;
@@ -3487,7 +3487,7 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 		sd_set_err_code(chip, SD_IO_ERR);
 		TRACE_GOTO(chip, RW_FAIL);
 	}
-	
+
 	if (srb->sc_data_direction == DMA_FROM_DEVICE) {
 		retval = sd_read(srb, chip, start_sector, sector_cnt);
 	} else {
@@ -3497,34 +3497,34 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 		TRACE_GOTO(chip, RW_FAIL);
 	}
 
-	retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb), 
+	retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb),
 			scsi_sg_count(srb), srb->sc_data_direction, chip->sd_timeout);
 	if (retval < 0) {
 		u8 stat = 0;
 		int err;
-		
+
 		sd_card->seq_mode = 0;
-		
+
 		if (retval == -ETIMEDOUT) {
 			err = STATUS_TIMEDOUT;
 		} else {
 			err = STATUS_FAIL;
 		}
-		
+
 		sd_print_debug_reg(chip);
-		
+
 		CATCH_TRIGGER1(chip);
-		
+
 		rtsx_read_register(chip, SD_STAT1, &stat);
 
 		rtsx_clear_sd_error(chip);
-		
+
 		if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
 			chip->rw_need_retry = 0;
 			RTSX_DEBUGP(("No card exist, exit sd_rw\n"));
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		retval = sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION, 0, SD_RSP_TYPE_R1b, NULL, 0);
 		if (retval != STATUS_SUCCESS) {
 			chip->rw_need_retry = 1;
@@ -3544,7 +3544,7 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 			sd_set_err_code(chip, SD_TO_ERR);
 			TRACE_GOTO(chip, RW_FAIL);
 		}
-		
+
 		TRACE_RET(chip, err);
 	}
 
@@ -3560,21 +3560,21 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 			TRACE_GOTO(chip, RW_FAIL);
 		}
 	}
-	
+
 	return STATUS_SUCCESS;
 
-RW_FAIL:	
+RW_FAIL:
 	sd_card->seq_mode = 0;
-	
+
 	if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
 		chip->rw_need_retry = 0;
 		RTSX_DEBUGP(("No card exist, exit sd_rw\n"));
 	}
-	
+
 	if (!chip->rw_need_retry) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (sd_check_err_code(chip,SD_CRC_ERR)) {
 		if (CHK_MMC_4BIT(sd_card) || CHK_MMC_8BIT(sd_card)) {
 			sd_card->mmc_dont_switch_bus = 1;
@@ -3601,11 +3601,11 @@ RW_FAIL:
 			chip->capacity[chip->card2lun[SD_CARD]] = 0;
 		}
 	}
-	
+
 	TRACE_RET(chip, STATUS_FAIL);
 }
 
-#else   
+#else
 
 int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 sector_cnt)
 {
@@ -3613,20 +3613,20 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 	u32 data_addr;
 	u8 cfg2;
 	int retval;
-	
+
 	if (srb->sc_data_direction == DMA_FROM_DEVICE) {
-		RTSX_DEBUGP(("sd_rw: Read %d %s from 0x%x\n", sector_cnt, 
+		RTSX_DEBUGP(("sd_rw: Read %d %s from 0x%x\n", sector_cnt,
 			     (sector_cnt > 1) ? "sectors" : "sector", start_sector));
 	} else {
-		RTSX_DEBUGP(("sd_rw: Write %d %s to 0x%x\n", sector_cnt, 
+		RTSX_DEBUGP(("sd_rw: Write %d %s to 0x%x\n", sector_cnt,
 			     (sector_cnt > 1) ? "sectors" : "sector", start_sector));
 	}
 
 	sd_card->cleanup_counter = 0;
-	
+
 	if (!(chip->card_ready & SD_CARD)) {
 		sd_card->seq_mode = 0;
-		
+
 		retval = reset_sd_card(chip);
 		if (retval == STATUS_SUCCESS) {
 			chip->card_ready |= SD_CARD;
@@ -3654,14 +3654,14 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 		TRACE_GOTO(chip, RW_FAIL);
 	}
 
-	if (sd_card->seq_mode && ((sd_card->pre_dir != srb->sc_data_direction) 
+	if (sd_card->seq_mode && ((sd_card->pre_dir != srb->sc_data_direction)
 			|| ((sd_card->pre_sec_addr + sd_card->pre_sec_cnt) != start_sector ))) {
-		if ((sd_card->pre_sec_cnt < 0x80) 	
+		if ((sd_card->pre_sec_cnt < 0x80)
 				&& (sd_card->pre_dir == DMA_FROM_DEVICE)
-				&& !CHK_SD30_SPEED(sd_card) 
+				&& !CHK_SD30_SPEED(sd_card)
 				&& !CHK_SD_HS(sd_card)
 				&& !CHK_MMC_HS(sd_card)) {
-			sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+			sd_send_cmd_get_rsp(chip, SEND_STATUS,
 					sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		}
 
@@ -3680,15 +3680,15 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 			TRACE_GOTO(chip, RW_FAIL);
 		}
 
-		if ((sd_card->pre_sec_cnt < 0x80) 
-				&& !CHK_SD30_SPEED(sd_card) 
+		if ((sd_card->pre_sec_cnt < 0x80)
+				&& !CHK_SD30_SPEED(sd_card)
 				&& !CHK_SD_HS(sd_card)
 				&& !CHK_MMC_HS(sd_card)) {
-			sd_send_cmd_get_rsp(chip, SEND_STATUS, 
+			sd_send_cmd_get_rsp(chip, SEND_STATUS,
 					sd_card->sd_addr, SD_RSP_TYPE_R1, NULL, 0);
 		}
 	}
-	
+
 	rtsx_init_cmd(chip);
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_L, 0xFF, 0x00);
@@ -3707,7 +3707,7 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 	}
 
 	if (sd_card->seq_mode) {
-		cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+		cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 				SD_NO_CHECK_CRC7 | SD_RSP_LEN_0;
 		if (!CHK_SD30_SPEED(sd_card)) {
 			cfg2 |= SD_NO_CHECK_WAIT_CRC_TO;
@@ -3715,12 +3715,12 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, cfg2);
 
 		trans_dma_enable(srb->sc_data_direction, chip, sector_cnt * 512, DMA_512);
-		
+
 		if (srb->sc_data_direction == DMA_FROM_DEVICE) {
-			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, 
+			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF,
 				     SD_TM_AUTO_READ_3 | SD_TRANSFER_START);
 		} else {
-			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, 
+			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF,
 				     SD_TM_AUTO_WRITE_3 | SD_TRANSFER_START);
 		}
 
@@ -3730,14 +3730,14 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 	} else {
 		if (srb->sc_data_direction == DMA_FROM_DEVICE) {
 			RTSX_DEBUGP(("SD/MMC CMD %d\n", READ_MULTIPLE_BLOCK));
-			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF, 
+			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF,
 				     0x40 | READ_MULTIPLE_BLOCK);
 			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD1, 0xFF, (u8)(data_addr >> 24));
 			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD2, 0xFF, (u8)(data_addr >> 16));
 			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD3, 0xFF, (u8)(data_addr >> 8));
 			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD4, 0xFF, (u8)data_addr);
 
-			cfg2 = SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+			cfg2 = SD_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 					SD_CHECK_CRC7 | SD_RSP_LEN_6;
 			if (!CHK_SD30_SPEED(sd_card)) {
 				cfg2 |= SD_NO_CHECK_WAIT_CRC_TO;
@@ -3746,9 +3746,9 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 
 			trans_dma_enable(srb->sc_data_direction, chip, sector_cnt * 512, DMA_512);
 
-			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, 
+			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF,
 				     SD_TM_AUTO_READ_2 | SD_TRANSFER_START);
-			rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, 
+			rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER,
 				     SD_TRANSFER_END, SD_TRANSFER_END);
 
 			rtsx_send_cmd_no_wait(chip);
@@ -3769,16 +3769,16 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 				TRACE_GOTO(chip, RW_FAIL);
 			}
 
-			retval = sd_send_cmd_get_rsp(chip, WRITE_MULTIPLE_BLOCK, 
+			retval = sd_send_cmd_get_rsp(chip, WRITE_MULTIPLE_BLOCK,
 					data_addr, SD_RSP_TYPE_R1, NULL, 0);
 			if (retval != STATUS_SUCCESS) {
 				chip->rw_need_retry = 1;
 				TRACE_GOTO(chip, RW_FAIL);
 			}
-			
+
 			rtsx_init_cmd(chip);
 
-			cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END | 
+			cfg2 = SD_NO_CALCULATE_CRC7 | SD_CHECK_CRC16 | SD_NO_WAIT_BUSY_END |
 					SD_NO_CHECK_CRC7 | SD_RSP_LEN_0;
 			if (!CHK_SD30_SPEED(sd_card)) {
 				cfg2 |= SD_NO_CHECK_WAIT_CRC_TO;
@@ -3787,9 +3787,9 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 
 			trans_dma_enable(srb->sc_data_direction, chip, sector_cnt * 512, DMA_512);
 
-			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, 
+			rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF,
 				     SD_TM_AUTO_WRITE_3 | SD_TRANSFER_START);
-			rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, 
+			rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER,
 				     SD_TRANSFER_END, SD_TRANSFER_END);
 
 			rtsx_send_cmd_no_wait(chip);
@@ -3798,34 +3798,34 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 		sd_card->seq_mode = 1;
 	}
 
-	retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb), 
+	retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb),
 			scsi_sg_count(srb), srb->sc_data_direction, chip->sd_timeout);
 	if (retval < 0) {
 		u8 stat = 0;
 		int err;
-		
+
 		sd_card->seq_mode = 0;
-		
+
 		if (retval == -ETIMEDOUT) {
 			err = STATUS_TIMEDOUT;
 		} else {
 			err = STATUS_FAIL;
 		}
-		
+
 		sd_print_debug_reg(chip);
-		
+
 		CATCH_TRIGGER1(chip);
-		
+
 		rtsx_read_register(chip, SD_STAT1, &stat);
 
 		rtsx_clear_sd_error(chip);
-		
+
 		if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
 			chip->rw_need_retry = 0;
 			RTSX_DEBUGP(("No card exist, exit sd_rw\n"));
 			TRACE_GOTO(chip, RW_FAIL);
 		}
-		
+
 		retval = sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION, 0, SD_RSP_TYPE_R1b, NULL, 0);
 		if (retval != STATUS_SUCCESS) {
 			chip->rw_need_retry = 1;
@@ -3845,28 +3845,28 @@ int sd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32 start_sector, u16 s
 			sd_set_err_code(chip, SD_TO_ERR);
 			TRACE_GOTO(chip, RW_FAIL);
 		}
-		
+
 		TRACE_RET(chip, err);
 	}
-	
+
 	sd_card->pre_sec_addr = start_sector;
 	sd_card->pre_sec_cnt = sector_cnt;
 	sd_card->pre_dir = srb->sc_data_direction;
-	
+
 	return STATUS_SUCCESS;
 
-RW_FAIL:	
+RW_FAIL:
 	sd_card->seq_mode = 0;
-	
+
 	if (detect_card_cd(chip, SD_CARD) != STATUS_SUCCESS) {
 		chip->rw_need_retry = 0;
 		RTSX_DEBUGP(("No card exist, exit sd_rw\n"));
 	}
-	
+
 	if (!chip->rw_need_retry) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	if (sd_check_err_code(chip,SD_CRC_ERR)) {
 		if (CHK_MMC_4BIT(sd_card) || CHK_MMC_8BIT(sd_card)) {
 			sd_card->mmc_dont_switch_bus = 1;
@@ -3893,11 +3893,11 @@ RW_FAIL:
 			chip->capacity[chip->card2lun[SD_CARD]] = 0;
 		}
 	}
-	
+
 	TRACE_RET(chip, STATUS_FAIL);
 }
 
-#endif  
+#endif
 
 #ifdef SUPPORT_CPRM
 int soft_reset_sd_card(struct rtsx_chip *chip)
@@ -3905,7 +3905,7 @@ int soft_reset_sd_card(struct rtsx_chip *chip)
 	return reset_sd(chip);
 }
 
-int ext_sd_send_cmd_get_rsp(struct rtsx_chip *chip, u8 cmd_idx, 
+int ext_sd_send_cmd_get_rsp(struct rtsx_chip *chip, u8 cmd_idx,
 		u32 arg, u8 rsp_type, u8 *rsp, int rsp_len, int special_check)
 {
 	int retval;
@@ -3932,9 +3932,9 @@ RTY_SEND_CMD:
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD4, 0xFF, (u8)arg);
 
 	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CFG2, 0xFF, rsp_type);
-	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE, 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_DATA_SOURCE,
 			0x01, PINGPONG_BUFFER);
-	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 
+	rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER,
 			0xFF, SD_TM_CMD_RSP | SD_TRANSFER_START);
 	rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
 
@@ -3948,7 +3948,7 @@ RTY_SEND_CMD:
 			rtsx_add_cmd(chip, READ_REG_CMD, reg_addr, 0, 0);
 		}
 		stat_idx = 6;
-	} 
+	}
 	rtsx_add_cmd(chip, READ_REG_CMD, SD_CMD5, 0, 0);
 
 	rtsx_add_cmd(chip, READ_REG_CMD, SD_STAT1, 0, 0);
@@ -3974,7 +3974,7 @@ RTY_SEND_CMD:
 		return STATUS_SUCCESS;
 	}
 
-	ptr = rtsx_get_cmd_data(chip) + 1;  
+	ptr = rtsx_get_cmd_data(chip) + 1;
 
 	if ((ptr[0] & 0xC0) != 0) {
 		sd_set_err_code(chip, SD_STS_ERR);
@@ -3998,7 +3998,7 @@ RTY_SEND_CMD:
 		}
 	}
 
-	if ((cmd_idx == SELECT_CARD) || (cmd_idx == APP_CMD) || 
+	if ((cmd_idx == SELECT_CARD) || (cmd_idx == APP_CMD) ||
 			(cmd_idx == SEND_STATUS) || (cmd_idx == STOP_TRANSMISSION)) {
 		if ((cmd_idx != STOP_TRANSMISSION) && (special_check == 0)) {
 			if (ptr[1] & 0x80) {
@@ -4006,7 +4006,7 @@ RTY_SEND_CMD:
 			}
 		}
 #ifdef SUPPORT_SD_LOCK
-		if (ptr[1] & 0x7D) 
+		if (ptr[1] & 0x7D)
 #else
 		if (ptr[1] & 0x7F)
 #endif
@@ -4016,7 +4016,7 @@ RTY_SEND_CMD:
 		if (ptr[2] & 0xF8) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		if (cmd_idx == SELECT_CARD) {
 			if (rsp_type == SD_RSP_TYPE_R2) {
 				if ((ptr[3] & 0x1E) != 0x04) {
@@ -4072,11 +4072,11 @@ int ext_sd_get_rsp(struct rtsx_chip *chip, int len, u8 *rsp, u8 rsp_type)
 		memcpy(rsp, rtsx_get_cmd_data(chip), min_len);
 
 		RTSX_DEBUGP(("min_len = %d\n", min_len));
-		RTSX_DEBUGP(("Response in cmd buf: 0x%x 0x%x 0x%x 0x%x\n", 
+		RTSX_DEBUGP(("Response in cmd buf: 0x%x 0x%x 0x%x 0x%x\n",
 			rsp[0], rsp[1], rsp[2], rsp[3]));
 	}
 
-	return STATUS_SUCCESS;	
+	return STATUS_SUCCESS;
 }
 
 int sd_pass_thru_mode(struct scsi_cmnd *srb, struct rtsx_chip *chip)
@@ -4089,18 +4089,18 @@ int sd_pass_thru_mode(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		0x00,
 		0x00,
 		0x0E,
-		0x00,	
-		0x00,	
-		0x00,	
-		0x00,	
-		0x53,	
-		0x44,	
-		0x20,	
-		0x43,	
-		0x61,	
-		0x72,	
-		0x64,	
-		0x00,	
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x53,
+		0x44,
+		0x20,
+		0x43,
+		0x61,
+		0x72,
+		0x64,
+		0x00,
 		0x00,
 		0x00,
 	};
@@ -4113,8 +4113,8 @@ int sd_pass_thru_mode(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
-	if ((0x53 != srb->cmnd[2]) || (0x44 != srb->cmnd[3]) || (0x20 != srb->cmnd[4]) || 
-			(0x43 != srb->cmnd[5]) || (0x61 != srb->cmnd[6]) || 
+	if ((0x53 != srb->cmnd[2]) || (0x44 != srb->cmnd[3]) || (0x20 != srb->cmnd[4]) ||
+			(0x43 != srb->cmnd[5]) || (0x61 != srb->cmnd[6]) ||
 			(0x72 != srb->cmnd[7]) || (0x64 != srb->cmnd[8])) {
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
@@ -4158,35 +4158,35 @@ static inline int get_rsp_type(struct scsi_cmnd *srb, u8 *rsp_type, int *rsp_len
 
 	switch (srb->cmnd[10]) {
 		case 0x03:
-			*rsp_type = SD_RSP_TYPE_R0; 
+			*rsp_type = SD_RSP_TYPE_R0;
 			*rsp_len = 0;
 			break;
 
 		case 0x04:
-			*rsp_type = SD_RSP_TYPE_R1; 
+			*rsp_type = SD_RSP_TYPE_R1;
 			*rsp_len = 6;
 			break;
 
 		case 0x05:
-			*rsp_type = SD_RSP_TYPE_R1b; 
+			*rsp_type = SD_RSP_TYPE_R1b;
 			*rsp_len = 6;
 			break;
 
 		case 0x06:
-			*rsp_type = SD_RSP_TYPE_R2; 
+			*rsp_type = SD_RSP_TYPE_R2;
 			*rsp_len = 17;
 			break;
 
 		case 0x07:
-			*rsp_type = SD_RSP_TYPE_R3; 
+			*rsp_type = SD_RSP_TYPE_R3;
 			*rsp_len = 6;
 			break;
-			
+
 		default:
 			return STATUS_FAIL;
 	}
 
-	return STATUS_SUCCESS;	
+	return STATUS_SUCCESS;
 }
 
 int sd_execute_no_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
@@ -4202,7 +4202,7 @@ int sd_execute_no_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
-	
+
 	retval = sd_switch_clock(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, TRANSPORT_FAILED);
@@ -4212,7 +4212,7 @@ int sd_execute_no_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		sd_card->pre_cmd_err = 0;
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_CHANGE);
 		TRACE_RET(chip, TRANSPORT_FAILED);
-	}	
+	}
 
 	cmd_idx = srb->cmnd[2] & 0x3F;
 	if (srb->cmnd[1] & 0x02) {
@@ -4222,11 +4222,11 @@ int sd_execute_no_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		acmd = 1;
 	}
 
-	arg = ((u32)srb->cmnd[3] << 24) | ((u32)srb->cmnd[4] << 16) | 
+	arg = ((u32)srb->cmnd[3] << 24) | ((u32)srb->cmnd[4] << 16) |
 		((u32)srb->cmnd[5] << 8) | srb->cmnd[6];
 
 	retval = get_rsp_type(srb, &rsp_type, &rsp_len);
-	if (retval != STATUS_SUCCESS) {	
+	if (retval != STATUS_SUCCESS) {
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
@@ -4266,14 +4266,14 @@ int sd_execute_no_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (acmd) {
-		retval = ext_sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr, 
+		retval = ext_sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Cmd_Failed);
 		}
 	}
 
-	retval = ext_sd_send_cmd_get_rsp(chip, cmd_idx, arg, rsp_type, 
+	retval = ext_sd_send_cmd_get_rsp(chip, cmd_idx, arg, rsp_type,
 			sd_card->rsp, rsp_len, 0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_GOTO(chip, SD_Execute_Cmd_Failed);
@@ -4285,7 +4285,7 @@ int sd_execute_no_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 			TRACE_GOTO(chip, SD_Execute_Cmd_Failed);
 		}
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 	retval = sd_update_lock_status(chip);
 	if (retval != STATUS_SUCCESS) {
@@ -4312,7 +4312,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	unsigned int lun = SCSI_LUN(srb);
-	int retval, rsp_len, i; 
+	int retval, rsp_len, i;
 	int cmd13_checkbit = 0, read_err = 0;
 	u8 cmd_idx, rsp_type, bus_width;
 	u8 send_cmd12 = 0, standby = 0, acmd = 0;
@@ -4328,7 +4328,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_CHANGE);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
-	
+
 	retval = sd_switch_clock(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, TRANSPORT_FAILED);
@@ -4348,7 +4348,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	data_len = ((u32)srb->cmnd[7] << 16) | ((u32)srb->cmnd[8] << 8) | srb->cmnd[9];
 
 	retval = get_rsp_type(srb, &rsp_type, &rsp_len);
-	if (retval != STATUS_SUCCESS) {	
+	if (retval != STATUS_SUCCESS) {
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
@@ -4358,7 +4358,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if ((sd_card->sd_lock_status & SD_LOCK_1BIT_MODE) == 0) {
 		if (CHK_MMC_8BIT(sd_card)) {
@@ -4377,7 +4377,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 #endif
 
 	if (data_len < 512) {
-		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, data_len, 
+		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, data_len,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
@@ -4392,14 +4392,14 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (acmd) {
-		retval = ext_sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr, 
+		retval = ext_sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
 		}
 	}
 
-	if (data_len <= 512) {   
+	if (data_len <= 512) {
 		int min_len;
 		u8 *buf;
 #ifndef USING_PPBUF
@@ -4408,23 +4408,23 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 #endif
 		u16 byte_cnt, blk_cnt;
 		u8 cmd[5];
-		
+
 		byte_cnt = ((u16)(srb->cmnd[8] & 0x03) << 8) | srb->cmnd[9];
 		blk_cnt = 1;
-		
+
 		cmd[0] = 0x40 | cmd_idx;
 		cmd[1] = srb->cmnd[3];
 		cmd[2] = srb->cmnd[4];
 		cmd[3] = srb->cmnd[5];
 		cmd[4] = srb->cmnd[6];
-		
+
 		buf = (u8 *)kmalloc(data_len, GFP_KERNEL);
 		if (buf == NULL) {
 			TRACE_RET(chip, TRANSPORT_ERROR);
 		}
-		
+
 #ifdef USING_PPBUF
-		retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, byte_cnt, 
+		retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, byte_cnt,
 				       blk_cnt, bus_width, buf, data_len, 2000);
 		if (retval != STATUS_SUCCESS) {
 			read_err = 1;
@@ -4434,9 +4434,9 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		}
 #else
 		ptr =  buf;
-		
+
 		for (i = 0; i < (data_len / PPBUF_LEN); i++) {
-			retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, byte_cnt, 
+			retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, byte_cnt,
 					blk_cnt, bus_width, ptr, PPBUF_LEN, 1000);
 			if (retval != STATUS_SUCCESS) {
 				read_err = 1;
@@ -4444,13 +4444,13 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 				rtsx_clear_sd_error(chip);
 				TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
 			}
-			
+
 			ptr += PPBUF_LEN;
 		}
-		
+
 		residue = data_len % PPBUF_LEN;
 		if (residue) {
-			retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, byte_cnt, 
+			retval = sd_read_data(chip, SD_TM_NORMAL_READ, cmd, 5, byte_cnt,
 					blk_cnt, bus_width, ptr, residue, 1000);
 			if (retval != STATUS_SUCCESS) {
 				read_err = 1;
@@ -4460,21 +4460,21 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 			}
 		}
 #endif
-		
+
 		min_len = min(data_len, scsi_bufflen(srb));
 		rtsx_stor_set_xfer_buf(buf, min_len, srb);
-		
+
 		kfree(buf);
-	} else if (!(data_len & 0x1FF)) {	
+	} else if (!(data_len & 0x1FF)) {
 		rtsx_init_cmd(chip);
 
 		trans_dma_enable(DMA_FROM_DEVICE, chip, data_len, DMA_512);
 
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_H, 0xFF, 0x02);
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_L, 0xFF, 0x00);
-		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H, 
+		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H,
 				0xFF, (srb->cmnd[7] & 0xFE) >> 1);
-		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_L, 
+		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_L,
 				0xFF, (u8)((data_len & 0x0001FE00) >> 9));
 
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_CMD0, 0xFF, 0x40 | cmd_idx);
@@ -4488,10 +4488,10 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, SD_TM_AUTO_READ_2 | SD_TRANSFER_START);
 		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
-		
+
 		rtsx_send_cmd_no_wait(chip);
 
-		retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb), 
+		retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb),
 			scsi_sg_count(srb), DMA_FROM_DEVICE, 10000);
 		if (retval < 0) {
 			read_err = 1;
@@ -4516,7 +4516,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (send_cmd12) {
-		retval = ext_sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION, 
+		retval = ext_sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION,
 				0, SD_RSP_TYPE_R1b, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
@@ -4524,7 +4524,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (data_len < 512) {
-		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, 0x200, 
+		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, 0x200,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
@@ -4534,18 +4534,18 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
 		}
-		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);		
+		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
 		}
 	}
 
-	if ((srb->cmnd[1] & 0x02) || (srb->cmnd[1] & 0x04)) { 	
+	if ((srb->cmnd[1] & 0x02) || (srb->cmnd[1] & 0x04)) {
 		cmd13_checkbit = 1;
 	}
 
 	for (i = 0; i < 3; i++) {
-		retval = ext_sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, 
+		retval = ext_sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
 			SD_RSP_TYPE_R1, NULL, 0, cmd13_checkbit);
 		if (retval == STATUS_SUCCESS) {
 			break;
@@ -4554,7 +4554,7 @@ int sd_execute_read_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_GOTO(chip, SD_Execute_Read_Cmd_Failed);
 	}
-	
+
 	scsi_set_resid(srb, 0);
 	return TRANSPORT_GOOD;
 
@@ -4577,7 +4577,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	unsigned int lun = SCSI_LUN(srb);
-	int retval, rsp_len, i; 
+	int retval, rsp_len, i;
 	int cmd13_checkbit = 0, write_err = 0;
 	u8 cmd_idx, rsp_type;
 	u8 send_cmd12 = 0, standby = 0, acmd = 0;
@@ -4598,7 +4598,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_CHANGE);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
-	
+
 	retval = sd_switch_clock(chip);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, TRANSPORT_FAILED);
@@ -4616,19 +4616,19 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	data_len = ((u32)srb->cmnd[7] << 16) | ((u32)srb->cmnd[8] << 8) | srb->cmnd[9];
-	arg = ((u32)srb->cmnd[3] << 24) | ((u32)srb->cmnd[4] << 16) | 
+	arg = ((u32)srb->cmnd[3] << 24) | ((u32)srb->cmnd[4] << 16) |
 		((u32)srb->cmnd[5] << 8) | srb->cmnd[6];
-		
-	
+
+
 #ifdef SUPPORT_SD_LOCK
 	if (cmd_idx == LOCK_UNLOCK) {
 		sd_lock_state = sd_card->sd_lock_status;
-		sd_lock_state &= SD_LOCKED;  
+		sd_lock_state &= SD_LOCKED;
 	}
 #endif
 
 	retval = get_rsp_type(srb, &rsp_type, &rsp_len);
-	if (retval != STATUS_SUCCESS) {	
+	if (retval != STATUS_SUCCESS) {
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
@@ -4661,7 +4661,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 #endif
 
 	if (data_len < 512) {
-		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, data_len, 
+		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, data_len,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
@@ -4676,20 +4676,20 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (acmd) {
-		retval = ext_sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr, 
+		retval = ext_sd_send_cmd_get_rsp(chip, APP_CMD, sd_card->sd_addr,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 		}
 	}
 
-	retval = ext_sd_send_cmd_get_rsp(chip, cmd_idx, arg, rsp_type, 
+	retval = ext_sd_send_cmd_get_rsp(chip, cmd_idx, arg, rsp_type,
 			sd_card->rsp, rsp_len, 0);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 	}
 
-	if (data_len <= 512) {   
+	if (data_len <= 512) {
 		u16 i;
 		u8 *buf;
 
@@ -4699,17 +4699,17 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		}
 
 		rtsx_stor_get_xfer_buf(buf, data_len, srb);
-		
+
 #ifdef SUPPORT_SD_LOCK
 		if (cmd_idx == LOCK_UNLOCK) {
 			lock_cmd_type = buf[0] & 0x0F;
 		}
 #endif
-		
+
 		if (data_len > 256) {
 			rtsx_init_cmd(chip);
 			for (i = 0; i < 256; i++) {
-				rtsx_add_cmd(chip, WRITE_REG_CMD, 
+				rtsx_add_cmd(chip, WRITE_REG_CMD,
 						PPBUF_BASE2 + i, 0xFF, buf[i]);
 			}
 			retval = rtsx_send_cmd(chip, 0, 250);
@@ -4720,7 +4720,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 
 			rtsx_init_cmd(chip);
 			for (i = 256; i < data_len; i++) {
-				rtsx_add_cmd(chip, WRITE_REG_CMD, 
+				rtsx_add_cmd(chip, WRITE_REG_CMD,
 						PPBUF_BASE2 + i, 0xFF, buf[i]);
 			}
 			retval = rtsx_send_cmd(chip, 0, 250);
@@ -4731,7 +4731,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		} else {
 			rtsx_init_cmd(chip);
 			for (i = 0; i < data_len; i++) {
-				rtsx_add_cmd(chip, WRITE_REG_CMD, 
+				rtsx_add_cmd(chip, WRITE_REG_CMD,
 						PPBUF_BASE2 + i, 0xFF, buf[i]);
 			}
 			retval = rtsx_send_cmd(chip, 0, 250);
@@ -4744,7 +4744,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		kfree(buf);
 
 		rtsx_init_cmd(chip);
-		
+
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_H, 0xFF, srb->cmnd[8] & 0x03);
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_L, 0xFF, srb->cmnd[9]);
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H, 0xFF, 0x00);
@@ -4755,36 +4755,36 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
 
 		retval = rtsx_send_cmd(chip, SD_CARD, 250);
-	} else if (!(data_len & 0x1FF)) {	
+	} else if (!(data_len & 0x1FF)) {
 		rtsx_init_cmd(chip);
 
 		trans_dma_enable(DMA_TO_DEVICE, chip, data_len, DMA_512);
 
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_H, 0xFF, 0x02);
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BYTE_CNT_L, 0xFF, 0x00);
-		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H, 
+		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_H,
 				0xFF, (srb->cmnd[7] & 0xFE) >> 1);
-		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_L, 
+		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_BLOCK_CNT_L,
 				0xFF, (u8)((data_len & 0x0001FE00) >> 9));
 
 		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_TRANSFER, 0xFF, SD_TM_AUTO_WRITE_3 | SD_TRANSFER_START);
 		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_TRANSFER, SD_TRANSFER_END, SD_TRANSFER_END);
-		
+
 		rtsx_send_cmd_no_wait(chip);
 
-		retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb), 
+		retval = rtsx_transfer_data(chip, SD_CARD, scsi_sglist(srb), scsi_bufflen(srb),
 			scsi_sg_count(srb), DMA_TO_DEVICE, 10000);
 
 	} else {
 		TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 	}
-	
+
 	if (retval < 0) {
 		write_err = 1;
 		rtsx_clear_sd_error(chip);
 		TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if (cmd_idx == LOCK_UNLOCK) {
 		if (lock_cmd_type == SD_ERASE) {
@@ -4795,15 +4795,15 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 
 		rtsx_init_cmd(chip);
 		rtsx_add_cmd(chip, CHECK_REG_CMD, SD_BUS_STAT, SD_DAT0_STATUS, SD_DAT0_STATUS);
-		rtsx_send_cmd(chip, SD_CARD, 250);   
-		
+		rtsx_send_cmd(chip, SD_CARD, 250);
+
 		retval = sd_update_lock_status(chip);
 		if (retval != STATUS_SUCCESS) {
 			RTSX_DEBUGP(("Lock command fail!\n"));
 			lock_cmd_fail = 1;
 		}
 	}
-#endif 
+#endif
 
 	if (standby) {
 		retval = sd_select_card(chip, 1);
@@ -4813,7 +4813,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (send_cmd12) {
-		retval = ext_sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION, 
+		retval = ext_sd_send_cmd_get_rsp(chip, STOP_TRANSMISSION,
 				0, SD_RSP_TYPE_R1b, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
@@ -4821,7 +4821,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	}
 
 	if (data_len < 512) {
-		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, 0x200, 
+		retval = ext_sd_send_cmd_get_rsp(chip, SET_BLOCKLEN, 0x200,
 				SD_RSP_TYPE_R1, NULL, 0, 0);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
@@ -4831,18 +4831,18 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 		}
-		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);		
+		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 		}
 	}
 
-	if ((srb->cmnd[1] & 0x02) || (srb->cmnd[1] & 0x04)) { 	
+	if ((srb->cmnd[1] & 0x02) || (srb->cmnd[1] & 0x04)) {
 		cmd13_checkbit = 1;
 	}
 
 	for (i = 0; i < 3; i++) {
-		retval = ext_sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr, 
+		retval = ext_sd_send_cmd_get_rsp(chip, SEND_STATUS, sd_card->sd_addr,
 			SD_RSP_TYPE_R1, NULL, 0, cmd13_checkbit);
 		if (retval == STATUS_SUCCESS) {
 			break;
@@ -4851,7 +4851,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_GOTO(chip, SD_Execute_Write_Cmd_Failed);
 	}
-	
+
 #ifdef SUPPORT_SD_LOCK
 	if (cmd_idx == LOCK_UNLOCK) {
 		if (!lock_cmd_fail) {
@@ -4864,7 +4864,7 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 			}
 		}
 
-		RTSX_DEBUGP(("sd_lock_state = 0x%x, sd_card->sd_lock_status = 0x%x\n", 
+		RTSX_DEBUGP(("sd_lock_state = 0x%x, sd_card->sd_lock_status = 0x%x\n",
 			     sd_lock_state, sd_card->sd_lock_status));
 		if (sd_lock_state ^ (sd_card->sd_lock_status & SD_LOCKED)) {
 			sd_card->sd_lock_notify = 1;
@@ -4884,13 +4884,13 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 			}
 		}
 	}
-	
+
 	if (lock_cmd_fail) {
 		scsi_set_resid(srb, 0);
 		set_sense_type(chip, lun, SENSE_TYPE_NO_SENSE);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
-#endif  
+#endif
 
 	scsi_set_resid(srb, 0);
 	return TRANSPORT_GOOD;
@@ -4928,7 +4928,7 @@ int sd_get_cmd_rsp(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
-	data_len = ((u16)srb->cmnd[7] << 8) | srb->cmnd[8];	
+	data_len = ((u16)srb->cmnd[7] << 8) | srb->cmnd[8];
 
 	if (sd_card->last_rsp_type == SD_RSP_TYPE_R0) {
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
@@ -4941,7 +4941,7 @@ int sd_get_cmd_rsp(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 	rtsx_stor_set_xfer_buf(sd_card->rsp, count, srb);
 
 	RTSX_DEBUGP(("Response length: %d\n", data_len));
-	RTSX_DEBUGP(("Response: 0x%x 0x%x 0x%x 0x%x\n", 
+	RTSX_DEBUGP(("Response: 0x%x 0x%x 0x%x 0x%x\n",
 		sd_card->rsp[0], sd_card->rsp[1], sd_card->rsp[2], sd_card->rsp[3]));
 
 	scsi_set_resid(srb, 0);
@@ -4965,20 +4965,20 @@ int sd_hw_rst(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
-	if ((0x53 != srb->cmnd[2]) || (0x44 != srb->cmnd[3]) || (0x20 != srb->cmnd[4]) || 
-			(0x43 != srb->cmnd[5]) || (0x61 != srb->cmnd[6]) || 
+	if ((0x53 != srb->cmnd[2]) || (0x44 != srb->cmnd[3]) || (0x20 != srb->cmnd[4]) ||
+			(0x43 != srb->cmnd[5]) || (0x61 != srb->cmnd[6]) ||
 			(0x72 != srb->cmnd[7]) || (0x64 != srb->cmnd[8])) {
 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_INVALID_CMD_FIELD);
 		TRACE_RET(chip, TRANSPORT_FAILED);
 	}
 
 	switch (srb->cmnd[1] & 0x0F) {
-		case 0:		
+		case 0:
 #ifdef SUPPORT_SD_LOCK
 			if (0x64 == srb->cmnd[9]) {
 				sd_card->sd_lock_status |= SD_SDR_RST;
 			}
-#endif 
+#endif
 			retval = reset_sd_card(chip);
 			if (retval != STATUS_SUCCESS) {
 #ifdef SUPPORT_SD_LOCK
@@ -4993,7 +4993,7 @@ int sd_hw_rst(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 #endif
 			break;
 
-		case 1:		
+		case 1:
 			retval = soft_reset_sd_card(chip);
 			if (retval != STATUS_SUCCESS) {
 				set_sense_type(chip, lun, SENSE_TYPE_MEDIA_NOT_PRESENT);
@@ -5015,7 +5015,7 @@ int sd_hw_rst(struct scsi_cmnd *srb, struct rtsx_chip *chip)
 void sd_cleanup_work(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
-	
+
 	if (sd_card->seq_mode) {
 		RTSX_DEBUGP(("SD: stop transmission\n"));
 		sd_stop_seq_mode(chip);
@@ -5031,28 +5031,28 @@ int sd_power_off_card3v3(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	RTSX_WRITE_REG(chip, CARD_OE, SD_OUTPUT_EN, 0);
-	
+
 	if (!chip->ft2_fast_mode) {
 		retval = card_power_off(chip, SD_CARD);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
-		
+
 		wait_timeout(50);
 	}
-	
+
 	if (chip->asic_code) {
 		retval = sd_pull_ctl_disable(chip);
 		if (retval != STATUS_SUCCESS) {
 			TRACE_RET(chip, STATUS_FAIL);
 		}
 	} else {
-		RTSX_WRITE_REG(chip, FPGA_PULL_CTL, 
+		RTSX_WRITE_REG(chip, FPGA_PULL_CTL,
 			FPGA_SD_PULL_CTL_BIT | 0x20, FPGA_SD_PULL_CTL_BIT);
 	}
-	
+
 	return STATUS_SUCCESS;
 }
 
@@ -5060,20 +5060,20 @@ int release_sd_card(struct rtsx_chip *chip)
 {
 	struct sd_info *sd_card = &(chip->sd_card);
 	int retval;
-	
+
 	RTSX_DEBUGP(("release_sd_card\n"));
-	
+
 	chip->card_ready &= ~SD_CARD;
 	chip->card_fail &= ~SD_CARD;
 	chip->card_wp &= ~SD_CARD;
 
 	chip->sd20_mode = 0;
-	
+
 #ifdef SUPPORT_SD_LOCK
 	sd_card->sd_lock_status = 0;
 	sd_card->sd_erase_status = 0;
 #endif
-	
+
 	memset(sd_card->raw_csd, 0, 16);
 	memset(sd_card->raw_scr, 0, 8);
 	memset(sd_card->raw_cid, 0, 16);
@@ -5082,7 +5082,7 @@ int release_sd_card(struct rtsx_chip *chip)
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
 	}
-	
+
 	retval = sd_change_bank_voltage(chip, SD_IO_3V3);
 	if (retval != STATUS_SUCCESS) {
 		TRACE_RET(chip, STATUS_FAIL);
@@ -5091,11 +5091,10 @@ int release_sd_card(struct rtsx_chip *chip)
 	if (CHK_SD30_SPEED(sd_card)) {
 		RTSX_WRITE_REG(chip, SD30_DRIVE_SEL, 0x07, chip->sd30_drive_sel_3v3);
 	}
-	
+
 	RTSX_WRITE_REG(chip, OCPPARA2, SD_OCP_THD_MASK, chip->sd_400mA_ocp_thd);
 
-	
+
 	return STATUS_SUCCESS;
 }
-
 

@@ -1,6 +1,6 @@
 /* Driver for Realtek PCI-Express card reader
  *
- * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+ * Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -31,7 +31,7 @@ int bit1cnt_long(u32 data)
 	int i, cnt = 0;
 	for (i = 0; i < 32; i++) {
 		if (data & 0x01)
-			cnt ++;	
+			cnt ++;
 		data >>= 1;
 	}
 	return cnt;

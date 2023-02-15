@@ -1,6 +1,6 @@
 # Driver for Realtek PCI-Express card reader
 #
-# Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.  
+# Copyright(c) 2009 Realtek Semiconductor Corp. All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -45,5 +45,4 @@ install:
 clean:
 	rm -f *.o *.ko
 	rm -f $(TARGET_MODULE).mod.c
-
 
